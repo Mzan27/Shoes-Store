@@ -1,0 +1,14 @@
+{
+  "name": "shoes-store-ecommerce",
+  "version": "1.0.0",
+  "description": "Shoes Store E-Commerce Website (Backend & Frontend)",
+  "scripts": {
+    "start": "node run-all.js",
+    "dev": "node run-all.js",
+    "backend": "cd backend && php artisan serve --port=8000",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "keywords": ["shoes", "ecommerce", "khqr", "cambodia"],
+  "author": "chhoyyeanseou5@gmail.com",
+  "license": "ISC"
+}
