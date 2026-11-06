@@ -248,18 +248,23 @@ export default function AdminDashboardView() {
   const handleDeleteOrder = async (orderId) => {
     if (window.confirm('តើអ្នកពិតជាចង់លុបការបញ្ជាទិញនេះមែនទេ? (Are you sure you want to delete this order?)')) {
       try {
+        // Optimistically remove from state immediately
+        setOrders(prev => prev.filter(o => o.id !== orderId && o.orderNumber !== orderId));
+        if (showOrderModal && (showOrderModal.id === orderId || showOrderModal.orderNumber === orderId)) {
+          setShowOrderModal(null);
+        }
+
         const res = await api.deleteOrder(orderId);
         if (res.success) {
           showToast('✓ បានលុបការបញ្ជាទិញដោយជោគជ័យ!', 'info');
-          if (showOrderModal && showOrderModal.id === orderId) {
-            setShowOrderModal(null);
-          }
-          loadAllAdminData();
+          await loadAllAdminData();
         } else {
           showToast(res.message || 'បរាជ័យក្នុងការលុប Order', 'error');
+          await loadAllAdminData();
         }
       } catch (err) {
         showToast('បរាជ័យក្នុងការលុប Order', 'error');
+        await loadAllAdminData();
       }
     }
   };

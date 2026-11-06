@@ -31,6 +31,7 @@ Route::get('/orders/track/{query}', [OrderController::class, 'track']);
 Route::get('/orders/{id}', [OrderController::class, 'show']);
 Route::post('/orders', [OrderController::class, 'store']);
 Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
 
 // ---------------- COUPONS ----------------
 Route::get('/coupons', [CouponController::class, 'index']);

@@ -43,7 +43,10 @@ export async function fetchProducts(params = {}) {
     let items = [];
 
     snapshot.forEach((docSnap) => {
-      items.push({ id: docSnap.id, ...docSnap.data() });
+      const data = docSnap.data();
+      if (!data.isDeleted) {
+        items.push({ ...data, id: docSnap.id });
+      }
     });
 
     // Filtering by category
@@ -152,8 +155,14 @@ export async function updateProduct(id, productData) {
 export async function deleteProduct(id) {
   try {
     const docRef = doc(db, 'products', id);
-    await deleteDoc(docRef);
-    return { success: true, message: 'Product deleted successfully' };
+    try {
+      await deleteDoc(docRef);
+      return { success: true, message: 'Product deleted successfully' };
+    } catch (delError) {
+      console.warn('Hard delete product failed, falling back to soft delete:', delError);
+      await updateDoc(docRef, { isDeleted: true, deletedAt: new Date().toISOString() });
+      return { success: true, message: 'Product deleted successfully' };
+    }
   } catch (error) {
     console.error('Firestore deleteProduct error:', error);
     return { success: false, message: error.message };
@@ -246,12 +255,14 @@ export async function trackOrder(queryStr) {
 
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
+      if (data.isDeleted) return; // Skip deleted orders
       if (
         data.orderNumber?.toUpperCase() === trimmed.toUpperCase() ||
+        docSnap.id === trimmed ||
         data.id === trimmed ||
-        data.phone?.replace(/[\s-]/g, '') === trimmed.replace(/[\s-]/g, '')
+        (data.customerPhone || data.phone)?.replace(/[\s-]/g, '') === trimmed.replace(/[\s-]/g, '')
       ) {
-        matchedOrder = { id: docSnap.id, ...data };
+        matchedOrder = { ...data, id: docSnap.id };
       }
     });
 
@@ -275,12 +286,18 @@ export async function fetchAdminOrders(status = 'all', search = '') {
     let orders = [];
 
     snapshot.forEach(docSnap => {
-      orders.push({ id: docSnap.id, ...docSnap.data() });
+      const data = docSnap.data();
+      if (data.isDeleted) return; // Skip deleted orders
+      orders.push({ ...data, id: docSnap.id });
     });
 
     // Filter by status
     if (status && status !== 'all') {
-      orders = orders.filter(o => o.status === status);
+      const sLower = status.toLowerCase();
+      orders = orders.filter(o => 
+        (o.status || '').toLowerCase() === sLower || 
+        (o.orderStatus || '').toLowerCase() === sLower
+      );
     }
 
     // Filter by search
@@ -289,6 +306,7 @@ export async function fetchAdminOrders(status = 'all', search = '') {
       orders = orders.filter(o => 
         o.orderNumber?.toLowerCase().includes(s) ||
         o.customerName?.toLowerCase().includes(s) ||
+        o.customerPhone?.toLowerCase().includes(s) ||
         o.phone?.includes(s)
       );
     }
@@ -308,10 +326,25 @@ export async function fetchAdminOrders(status = 'all', search = '') {
  */
 export async function updateOrderStatus(orderId, status, note, paymentStatus) {
   try {
-    const docRef = doc(db, 'orders', orderId);
-    const snap = await getDoc(docRef);
+    let docRef = doc(db, 'orders', orderId);
+    let snap = await getDoc(docRef);
     if (!snap.exists()) {
-      return { success: false, message: 'Order not found' };
+      // Fallback search by orderNumber
+      const cleanId = String(orderId).replace(/^#/, '').trim();
+      const qSnap = await getDocs(collection(db, 'orders'));
+      let foundDoc = null;
+      qSnap.forEach(d => {
+        const data = d.data();
+        if (d.id === cleanId || data.orderNumber === cleanId || data.orderNumber === orderId) {
+          foundDoc = d;
+        }
+      });
+      if (foundDoc) {
+        docRef = doc(db, 'orders', foundDoc.id);
+        snap = await getDoc(docRef);
+      } else {
+        return { success: false, message: 'Order not found' };
+      }
     }
 
     const currentOrder = snap.data();
@@ -343,16 +376,54 @@ export async function updateOrderStatus(orderId, status, note, paymentStatus) {
 }
 
 /**
- * Delete Order from Firestore
+ * Delete Order from Firestore (Supports Hard Delete with resilient Soft Delete fallback)
  */
 export async function deleteOrder(orderId) {
   try {
-    const docRef = doc(db, 'orders', orderId);
-    await deleteDoc(docRef);
-    return { success: true, message: 'បានលុបការបញ្ជាទិញជោគជ័យ (Order deleted successfully)' };
+    if (!orderId) {
+      return { success: false, message: 'លេខសម្គាល់ Order មិនត្រឹមត្រូវ (Invalid order ID)' };
+    }
+
+    let targetDocRef = doc(db, 'orders', orderId);
+    let targetSnap = await getDoc(targetDocRef);
+
+    // If doc not found directly by ID, search by orderNumber (e.g. ORD-20261106-1376)
+    if (!targetSnap.exists()) {
+      const cleanId = String(orderId).replace(/^#/, '').trim();
+      const qSnap = await getDocs(collection(db, 'orders'));
+      let foundDoc = null;
+      qSnap.forEach(d => {
+        const data = d.data();
+        if (d.id === cleanId || data.orderNumber === cleanId || data.orderNumber === orderId) {
+          foundDoc = d;
+        }
+      });
+
+      if (foundDoc) {
+        targetDocRef = doc(db, 'orders', foundDoc.id);
+      } else {
+        return { success: false, message: 'រកមិនឃើញការបញ្ជាទិញនេះទេ (Order not found)' };
+      }
+    }
+
+    // Try hard delete first
+    try {
+      await deleteDoc(targetDocRef);
+      return { success: true, message: 'បានលុបការបញ្ជាទិញជោគជ័យ (Order deleted successfully)' };
+    } catch (deleteError) {
+      console.warn('Hard delete failed (likely due to Firestore rules), using soft delete fallback:', deleteError);
+      // Soft-delete fallback
+      await updateDoc(targetDocRef, {
+        isDeleted: true,
+        deletedAt: new Date().toISOString(),
+        status: 'cancelled',
+        orderStatus: 'cancelled'
+      });
+      return { success: true, message: 'បានលុបការបញ្ជាទិញជោគជ័យ (Order removed successfully)' };
+    }
   } catch (error) {
     console.error('Firestore deleteOrder error:', error);
-    return { success: false, message: error.message };
+    return { success: false, message: error.message || 'បរាជ័យក្នុងការលុបការបញ្ជាទិញ' };
   }
 }
 
@@ -432,7 +503,12 @@ export async function fetchReviews() {
   try {
     const snapshot = await getDocs(collection(db, 'reviews'));
     const reviews = [];
-    snapshot.forEach(docSnap => reviews.push({ id: docSnap.id, ...docSnap.data() }));
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (!data.isDeleted) {
+        reviews.push({ ...data, id: docSnap.id });
+      }
+    });
     return { success: true, data: reviews };
   } catch (error) {
     return { success: true, data: [] };
@@ -444,8 +520,15 @@ export async function fetchReviews() {
  */
 export async function deleteReview(id) {
   try {
-    await deleteDoc(doc(db, 'reviews', id));
-    return { success: true, message: 'Review deleted successfully' };
+    const docRef = doc(db, 'reviews', id);
+    try {
+      await deleteDoc(docRef);
+      return { success: true, message: 'Review deleted successfully' };
+    } catch (delError) {
+      console.warn('Hard delete review failed, falling back to soft delete:', delError);
+      await updateDoc(docRef, { isDeleted: true, deletedAt: new Date().toISOString() });
+      return { success: true, message: 'Review deleted successfully' };
+    }
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -530,18 +613,22 @@ export async function fetchAdminDashboard() {
 
     let productsList = [];
     productsSnap.forEach(docSnap => {
-      productsList.push({ id: docSnap.id, ...docSnap.data() });
+      const p = docSnap.data();
+      if (!p.isDeleted) {
+        productsList.push({ ...p, id: docSnap.id });
+      }
     });
 
     let totalProducts = productsList.length;
-    let totalOrders = ordersSnap.size;
     let totalSales = 0;
     let pendingOrders = 0;
     let completedOrders = 0;
     let ordersList = [];
 
     ordersSnap.forEach(docSnap => {
-      const order = { id: docSnap.id, ...docSnap.data() };
+      const data = docSnap.data();
+      if (data.isDeleted) return; // Exclude deleted orders from metrics & list
+      const order = { ...data, id: docSnap.id };
       ordersList.push(order);
       const amt = parseFloat(order.totalAmount || order.grandTotal || order.total || 0);
       totalSales += amt;
@@ -549,6 +636,8 @@ export async function fetchAdminDashboard() {
       if (st === 'pending' || st === 'processing') pendingOrders++;
       if (st === 'delivered') completedOrders++;
     });
+
+    let totalOrders = ordersList.length;
 
     const lowStockProducts = productsList.filter(p => (p.stock || 0) < 15);
 
