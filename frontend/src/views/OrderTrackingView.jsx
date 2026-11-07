@@ -39,12 +39,32 @@ export default function OrderTrackingView() {
     }
   };
 
+  const handleQuickTrack = async (code) => {
+    setQuery(code);
+    setLoading(true);
+    setError('');
+    try {
+      const res = await api.trackOrder(code);
+      if (res.success) {
+        setOrder(res.data);
+      } else {
+        setError(res.message || 'រកមិនឃើញការបញ្ជាទិញនេះទេ');
+        setOrder(null);
+      }
+    } catch (err) {
+      setError('មិនមានទិន្នន័យការបញ្ជាទិញនេះទេ');
+      setOrder(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const statusSteps = ['Confirmed', 'Processing', 'Shipped', 'Delivered'];
 
   const getStepIndex = (status) => {
     if (!status) return 0;
     const lower = status.toLowerCase();
-    if (lower === 'confirmed') return 0;
+    if (lower === 'confirmed' || lower === 'pending') return 0;
     if (lower === 'processing') return 1;
     if (lower === 'shipped') return 2;
     if (lower === 'delivered') return 3;
@@ -75,9 +95,9 @@ export default function OrderTrackingView() {
         }}>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
-              <input 
+              <input
                 type="text"
-                placeholder="ឧ. STEP-2026-8901 ឬ លេខទូរស័ព្ទ 012889900"
+                placeholder="ឧ. ORD-20261107-7460 ឬ លេខទូរស័ព្ទ 012889900"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="form-input"
@@ -97,17 +117,24 @@ export default function OrderTrackingView() {
             <span>សាកល្បងលេខកូដគំរូ:</span>
             <button
               type="button"
-              onClick={() => { setQuery('STEP-2026-8901'); setTimeout(() => { api.trackOrder('STEP-2026-8901').then(r => r.success && setOrder(r.data)); }, 50); }}
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-light)', color: 'var(--accent-primary)', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer' }}
+              onClick={() => handleQuickTrack('ORD-20261107-7460')}
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-light)', color: 'var(--accent-primary)', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+            >
+              #ORD-20261107-7460 (jinwoo)
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickTrack('STEP-2026-8901')}
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-light)', color: '#00d2ff', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
             >
               #STEP-2026-8901 (Processing)
             </button>
             <button
               type="button"
-              onClick={() => { setQuery('STEP-2026-8902'); setTimeout(() => { api.trackOrder('STEP-2026-8902').then(r => r.success && setOrder(r.data)); }, 50); }}
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-light)', color: '#00d2ff', padding: '3px 8px', borderRadius: '4px', cursor: 'pointer' }}
+              onClick={() => handleQuickTrack('012889900')}
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-light)', color: '#10b981', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
             >
-              #STEP-2026-8902 (Confirmed)
+              📞 012 889 900
             </button>
           </div>
         </form>
@@ -240,7 +267,7 @@ export default function OrderTrackingView() {
             )}
 
             {/* Items in Order */}
-            <h4 style={{ fontSize: '1rem', marginBottom: '14px' }}>ទំនិញក្នុងកញ្ចប់ដឹកជញ្ជូន</h4>
+            <h4 style={{ fontSize: '1rem', marginBottom: '14px' }}>ទំនិញក្នុងកញ្ចប់ដឹកជញ្ជូន ({order.items?.length || 0})</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {(order.items || []).map((item, idx) => (
                 <div key={idx} style={{
@@ -252,15 +279,15 @@ export default function OrderTrackingView() {
                   background: 'rgba(255,255,255,0.02)',
                   border: '1px solid var(--border-light)'
                 }}>
-                  <img src={item.image} alt={item.name} style={{ width: '48px', height: '48px', borderRadius: '6px', objectFit: 'cover' }} />
+                  <img src={item.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100'} alt={item.name} style={{ width: '48px', height: '48px', borderRadius: '6px', objectFit: 'cover' }} />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{item.name}</div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                      ទំហំ EU {item.size} • ពណ៌: {item.color} • ចំនួន x{item.quantity}
+                      ទំហំ EU {item.size || 'Free'} • ពណ៌: {item.color || 'Standard'} • ចំនួន x{item.quantity || 1}
                     </div>
                   </div>
                   <div style={{ fontWeight: 700 }}>
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1)).toFixed(2)}
                   </div>
                 </div>
               ))}

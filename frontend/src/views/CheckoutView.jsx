@@ -25,17 +25,26 @@ export default function CheckoutView() {
     navigateTo, 
     setLastPlacedOrder,
     showToast,
-    storeSettings 
+    storeSettings,
+    currentUser
   } = useStore();
 
-  // Shipping form state
-  const [customerName, setCustomerName] = useState('');
+  // Shipping form state with auto-fill from logged-in user
+  const [customerName, setCustomerName] = useState(() => currentUser?.displayName || '');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerEmail, setCustomerEmail] = useState(() => currentUser?.email || '');
   const [province, setProvince] = useState('Phnom Penh');
   const [district, setDistrict] = useState('');
   const [streetAddress, setStreetAddress] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
+
+  // Sync if currentUser logs in while on checkout
+  React.useEffect(() => {
+    if (currentUser) {
+      if (!customerName && currentUser.displayName) setCustomerName(currentUser.displayName);
+      if (!customerEmail && currentUser.email) setCustomerEmail(currentUser.email);
+    }
+  }, [currentUser]);
 
   // Payment method: 'KHQR', 'COD', 'BANK'
   const [paymentMethod, setPaymentMethod] = useState('KHQR');
