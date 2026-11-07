@@ -146,21 +146,21 @@ export default function OrderTrackingView() {
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>កូដការបញ្ជាទិញ</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--accent-primary)' }}>
-                  #{order.id}
+                  #{order.orderNumber || order.id}
                 </div>
               </div>
 
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>កូដដឹកជញ្ជូន (Tracking #)</div>
                 <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>
-                  {order.trackingNumber || 'DELIV-PP-8821'}
+                  {order.trackingNumber || order.orderNumber || 'DELIV-PP-8821'}
                 </div>
               </div>
 
               <div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>ស្ថានភាពបច្ចុប្បន្ន</div>
                 <span className="badge badge-success" style={{ fontSize: '0.85rem' }}>
-                  {order.orderStatus}
+                  {order.orderStatus || order.status || 'PENDING'}
                 </span>
               </div>
             </div>
@@ -175,7 +175,7 @@ export default function OrderTrackingView() {
                 textAlign: 'center'
               }}>
                 {statusSteps.map((step, idx) => {
-                  const currentIdx = getStepIndex(order.orderStatus);
+                  const currentIdx = getStepIndex(order.orderStatus || order.status);
                   const isDone = idx <= currentIdx;
                   return (
                     <div key={step} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -210,7 +210,7 @@ export default function OrderTrackingView() {
             </div>
 
             {/* Timeline Notes */}
-            {order.timeline && order.timeline.length > 0 && (
+            {(order.timeline || order.statusTimeline) && (order.timeline || order.statusTimeline).length > 0 && (
               <div style={{
                 background: 'rgba(255,255,255,0.02)',
                 borderRadius: 'var(--radius-md)',
@@ -223,15 +223,15 @@ export default function OrderTrackingView() {
                   <span>កំណត់ត្រាលំហូរដឹកជញ្ជូន (Activity Timeline)</span>
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {order.timeline.map((event, idx) => (
+                  {(order.timeline || order.statusTimeline || []).map((event, idx) => (
                     <div key={idx} style={{ display: 'flex', gap: '14px', fontSize: '0.85rem' }}>
                       <span style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>•</span>
                       <div style={{ flex: 1 }}>
-                        <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{event.status}:</span>{' '}
-                        <span style={{ color: 'var(--text-secondary)' }}>{event.note}</span>
+                        <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{event.status || event.label}:</span>{' '}
+                        <span style={{ color: 'var(--text-secondary)' }}>{event.note || event.label || ''}</span>
                       </div>
                       <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>
-                        {new Date(event.time).toLocaleTimeString()}
+                        {event.time || (event.date ? `${event.date}` : '')}
                       </span>
                     </div>
                   ))}
@@ -242,7 +242,7 @@ export default function OrderTrackingView() {
             {/* Items in Order */}
             <h4 style={{ fontSize: '1rem', marginBottom: '14px' }}>ទំនិញក្នុងកញ្ចប់ដឹកជញ្ជូន</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {order.items.map((item, idx) => (
+              {(order.items || []).map((item, idx) => (
                 <div key={idx} style={{
                   display: 'flex',
                   alignItems: 'center',

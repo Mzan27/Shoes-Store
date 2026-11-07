@@ -213,11 +213,25 @@ export async function createOrder(orderData) {
     const randNum = Math.floor(1000 + Math.random() * 9000);
     const orderNumber = `ORD-${dateStr}-${randNum}`;
 
+    const shippingAddressObj = (typeof orderData.shippingAddress === 'object' && orderData.shippingAddress !== null)
+      ? orderData.shippingAddress
+      : {
+          province: orderData.province || 'ភ្នំពេញ (Phnom Penh)',
+          district: orderData.district || '',
+          streetAddress: orderData.streetAddress || (typeof orderData.shippingAddress === 'string' ? orderData.shippingAddress : (orderData.address || '')),
+          deliveryNotes: orderData.deliveryNotes || ''
+        };
+
     const newOrder = {
       ...orderData,
       orderNumber,
+      province: orderData.province || shippingAddressObj.province,
+      district: orderData.district || shippingAddressObj.district,
+      streetAddress: orderData.streetAddress || shippingAddressObj.streetAddress,
+      deliveryNotes: orderData.deliveryNotes || shippingAddressObj.deliveryNotes,
+      shippingAddress: shippingAddressObj,
       status: orderData.status || 'pending',
-      paymentStatus: orderData.paymentMethod === 'khqr' ? 'paid' : 'unpaid',
+      paymentStatus: orderData.paymentMethod === 'khqr' ? 'paid' : (orderData.paymentStatus || 'unpaid'),
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
       statusTimeline: [

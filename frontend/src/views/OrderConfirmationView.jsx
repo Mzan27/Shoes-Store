@@ -32,6 +32,44 @@ export default function OrderConfirmationView() {
     window.print();
   };
 
+  // Safe Multi-Format Address Resolver (Handles object, string, or flat fields)
+  const getAddressInfo = (o) => {
+    if (!o) return { province: 'ភ្នំពេញ (Phnom Penh)', details: '', notes: '' };
+
+    if (o.shippingAddress && typeof o.shippingAddress === 'object') {
+      const prov = o.shippingAddress.province || o.province || 'ភ្នំពេញ (Phnom Penh)';
+      const dist = o.shippingAddress.district || o.district || '';
+      const street = o.shippingAddress.streetAddress || o.streetAddress || o.address || '';
+      const notes = o.shippingAddress.deliveryNotes || o.deliveryNotes || '';
+      const details = [dist, street].filter(Boolean).join(', ');
+      return { province: prov, details, notes };
+    }
+
+    if (typeof o.shippingAddress === 'string' && o.shippingAddress.trim()) {
+      return {
+        province: o.province || 'ភ្នំពេញ (Phnom Penh)',
+        details: o.shippingAddress,
+        notes: o.deliveryNotes || ''
+      };
+    }
+
+    const prov = o.province || 'ភ្នំពេញ (Phnom Penh)';
+    const dist = o.district || '';
+    const street = o.streetAddress || o.address || '';
+    const notes = o.deliveryNotes || '';
+    const details = [dist, street].filter(Boolean).join(', ');
+    return { province: prov, details, notes };
+  };
+
+  const addressInfo = getAddressInfo(order);
+  const orderCode = order.orderNumber || order.id || 'N/A';
+  const items = Array.isArray(order.items) ? order.items : [];
+  const subtotal = typeof order.subtotal === 'number' ? order.subtotal : parseFloat(order.subtotal || 0) || 0;
+  const discountAmount = typeof order.discountAmount === 'number' ? order.discountAmount : parseFloat(order.discountAmount || 0) || 0;
+  const shippingFee = typeof order.shippingFee === 'number' ? order.shippingFee : parseFloat(order.shippingFee || 0) || 0;
+  const totalAmount = typeof order.totalAmount === 'number' ? order.totalAmount : parseFloat(order.totalAmount || 0) || 0;
+  const orderDate = order.createdAt ? new Date(order.createdAt).toLocaleString('km-KH') : new Date().toLocaleString('km-KH');
+
   return (
     <div style={{ padding: '40px 0 80px' }}>
       <div className="container" style={{ maxWidth: '780px' }}>
@@ -81,7 +119,7 @@ export default function OrderConfirmationView() {
             fontWeight: 800
           }}>
             <span>លេខកូដបញ្ជាទិញ:</span>
-            <span style={{ color: 'var(--accent-primary)' }}>#{order.id}</span>
+            <span style={{ color: 'var(--accent-primary)' }}>#{orderCode}</span>
           </div>
 
           {/* Telegram Notification Dispatched Badge */}
@@ -99,7 +137,7 @@ export default function OrderConfirmationView() {
             fontWeight: 600
           }}>
             <Send size={15} />
-            <span>ដំណឹងត្រូវបានបញ្ជូនទៅ Telegram របស់ម្ចាស់ហាង (chhoyyeanseou5@gmail.com)</span>
+            <span>ដំណឹងត្រូវបានបញ្ជូនទៅ Telegram របស់ម្ចាស់ហាងរួចរាល់</span>
           </div>
         </div>
 
@@ -109,7 +147,7 @@ export default function OrderConfirmationView() {
             <div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>វិក្កយបត្របញ្ជាទិញ (Order Receipt)</h3>
               <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                កាលបរិច្ឆេទ: {new Date(order.createdAt).toLocaleString()}
+                កាលបរិច្ឆេទ: {orderDate}
               </div>
             </div>
             <button onClick={handlePrint} className="btn btn-secondary btn-sm">
@@ -121,34 +159,34 @@ export default function OrderConfirmationView() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '24px', fontSize: '0.88rem' }}>
             <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
               <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>អតិថិជន:</div>
-              <div style={{ fontWeight: 700 }}>{order.customerName}</div>
-              <div style={{ color: 'var(--text-secondary)' }}>{order.customerPhone}</div>
-              <div style={{ color: 'var(--text-secondary)' }}>{order.customerEmail}</div>
+              <div style={{ fontWeight: 700 }}>{order.customerName || 'អតិថិជន'}</div>
+              <div style={{ color: 'var(--text-secondary)' }}>{order.customerPhone || 'មិនមានលេខទូរស័ព្ទ'}</div>
+              <div style={{ color: 'var(--text-secondary)' }}>{order.customerEmail || ''}</div>
             </div>
 
             <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
               <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>អាសយដ្ឋានដឹកជញ្ជូន:</div>
-              <div style={{ fontWeight: 700 }}>{order.shippingAddress.province}</div>
-              <div style={{ color: 'var(--text-secondary)' }}>{order.shippingAddress.district && `${order.shippingAddress.district}, `}{order.shippingAddress.streetAddress}</div>
-              {order.shippingAddress.deliveryNotes && (
+              <div style={{ fontWeight: 700 }}>{addressInfo.province}</div>
+              {addressInfo.details && <div style={{ color: 'var(--text-secondary)' }}>{addressInfo.details}</div>}
+              {addressInfo.notes && (
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  ចំណាំ: "{order.shippingAddress.deliveryNotes}"
+                  ចំណាំ: "{addressInfo.notes}"
                 </div>
               )}
             </div>
 
             <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
               <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>ការទូទាត់ & ស្ថានភាព:</div>
-              <div style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>{order.paymentMethod}</div>
-              <div style={{ color: '#10b981', fontWeight: 600 }}>ស្ថានភាពទូទាត់: {order.paymentStatus}</div>
-              <div style={{ color: '#00d2ff', fontWeight: 600 }}>ស្ថានភាពដឹកជញ្ជូន: {order.orderStatus}</div>
+              <div style={{ fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase' }}>{order.paymentMethod || 'KHQR'}</div>
+              <div style={{ color: '#10b981', fontWeight: 600 }}>ស្ថានភាពទូទាត់: {order.paymentStatus || 'unpaid'}</div>
+              <div style={{ color: '#00d2ff', fontWeight: 600 }}>ស្ថានភាពដឹកជញ្ជូន: {order.orderStatus || order.status || 'pending'}</div>
             </div>
           </div>
 
           {/* Ordered Items Table */}
-          <h4 style={{ fontSize: '1rem', marginBottom: '12px' }}>ទំនិញដែលបានកុម្ម៉ង់</h4>
+          <h4 style={{ fontSize: '1rem', marginBottom: '12px' }}>ទំនិញដែលបានកុម្ម៉ង់ ({items.length})</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-            {order.items.map((item, idx) => (
+            {items.map((item, idx) => (
               <div key={idx} style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -158,15 +196,15 @@ export default function OrderConfirmationView() {
                 borderRadius: '8px',
                 border: '1px solid var(--border-light)'
               }}>
-                <img src={item.image} alt={item.name} style={{ width: '48px', height: '48px', borderRadius: '6px', objectFit: 'cover' }} />
+                <img src={item.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100'} alt={item.name} style={{ width: '48px', height: '48px', borderRadius: '6px', objectFit: 'cover' }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{item.name}</div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    ទំហំ: EU {item.size} • ពណ៌: {item.color} • ចំនួន: x{item.quantity}
+                    ទំហំ: EU {item.size || 'Free'} • ពណ៌: {item.color || 'Standard'} • ចំនួន: x{item.quantity || 1}
                   </div>
                 </div>
                 <div style={{ fontWeight: 800 }}>
-                  ${(item.price * item.quantity).toFixed(2)}
+                  ${((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1)).toFixed(2)}
                 </div>
               </div>
             ))}
@@ -183,17 +221,17 @@ export default function OrderConfirmationView() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
               <span>តម្លៃទំនិញសរុប (Subtotal):</span>
-              <span>${order.subtotal.toFixed(2)}</span>
+              <span>${subtotal.toFixed(2)}</span>
             </div>
-            {order.discountAmount > 0 && (
+            {discountAmount > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#10b981' }}>
                 <span>ការបញ្ចុះតម្លៃ ({order.couponCode || 'PROMO'}):</span>
-                <span>-${order.discountAmount.toFixed(2)}</span>
+                <span>-${discountAmount.toFixed(2)}</span>
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
               <span>សេវាដឹកជញ្ជូន:</span>
-              <span>${order.shippingFee.toFixed(2)}</span>
+              <span>${shippingFee.toFixed(2)}</span>
             </div>
             <div style={{
               display: 'flex',
@@ -204,7 +242,7 @@ export default function OrderConfirmationView() {
               paddingTop: '12px'
             }}>
               <span>ចំនួនទឹកប្រាក់សរុប (Grand Total):</span>
-              <span className="gradient-text">${order.totalAmount.toFixed(2)}</span>
+              <span className="gradient-text">${totalAmount.toFixed(2)}</span>
             </div>
           </div>
         </div>
