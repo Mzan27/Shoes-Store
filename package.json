@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node run-all.js",
     "dev": "node run-all.js",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
     "backend": "cd backend && php artisan serve --port=8000",
     "frontend": "cd frontend && npm run dev"
   },
