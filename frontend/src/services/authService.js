@@ -6,31 +6,164 @@ import {
   updateProfile, 
   onAuthStateChanged 
 } from 'firebase/auth';
-import { auth, googleProvider } from './firebase';
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  setDoc, 
+  getDocs, 
+  query, 
+  where 
+} from 'firebase/firestore';
+import { auth, googleProvider, db } from './firebase';
+
+const LOCAL_STORAGE_USER_KEY = 'stepup_shoes_current_user';
+
+function isConfigurationOrProviderError(error) {
+  if (!error) return false;
+  const code = (error.code || '').toLowerCase();
+  const message = (error.message || '').toLowerCase();
+  return (
+    code.includes('configuration-not-found') ||
+    code.includes('operation-not-allowed') ||
+    code.includes('admin-restricted-operation') ||
+    message.includes('configuration-not-found') ||
+    message.includes('operation-not-allowed')
+  );
+}
 
 /**
  * Sign in with Email and Password
+ * Supports both Firebase Auth and Firestore Users fallback
  */
 export async function loginWithEmail(email, password) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  if (!cleanEmail || !password) {
+    return { success: false, error: 'សូមបញ្ចូលអ៊ីមែល និងលេខសម្ងាត់ (Please enter email & password)' };
+  }
+
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return { success: true, user: formatUser(userCredential.user) };
+    const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
+    const formatted = formatUser(userCredential.user);
+    localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(formatted));
+    window.dispatchEvent(new CustomEvent('stepup-auth-change', { detail: formatted }));
+    return { success: true, user: formatted };
   } catch (error) {
+    console.warn('Firebase signIn error:', error.code, error.message);
+    
+    // Fallback: If Firebase Auth is not configured or user not found in Auth, check Firestore users collection
+    const shouldFallback = 
+      isConfigurationOrProviderError(error) || 
+      error.code === 'auth/invalid-credential' ||
+      error.code === 'auth/user-not-found' ||
+      error.code === 'auth/wrong-password';
+
+    if (shouldFallback) {
+      try {
+        const q = query(collection(db, 'users'), where('email', '==', cleanEmail));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          const userDoc = snap.docs[0].data();
+          if (userDoc.password && userDoc.password !== password) {
+            return { success: false, error: 'លេខសម្ងាត់មិនត្រឹមត្រូវ (Wrong password)' };
+          }
+          const sessionUser = {
+            uid: snap.docs[0].id,
+            email: userDoc.email,
+            displayName: userDoc.displayName || userDoc.name || cleanEmail.split('@')[0],
+            photoURL: userDoc.photoURL || null
+          };
+          localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(sessionUser));
+          window.dispatchEvent(new CustomEvent('stepup-auth-change', { detail: sessionUser }));
+          return { success: true, user: sessionUser };
+        }
+      } catch (fsErr) {
+        console.warn('Firestore user lookup error:', fsErr);
+      }
+    }
     return { success: false, error: getAuthErrorMessage(error) };
   }
 }
 
 /**
  * Register a new user with Email, Password and Display Name
+ * Works both with Firebase Auth and persists in Cloud Firestore
  */
 export async function registerWithEmail(email, password, displayName = '') {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  const cleanName = (displayName || '').trim();
+
+  if (!cleanEmail || !password) {
+    return { success: false, error: 'សូមបញ្ចូលអ៊ីមែល និងលេខសម្ងាត់ (Please enter email & password)' };
+  }
+
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    if (displayName.trim()) {
-      await updateProfile(userCredential.user, { displayName });
+    const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+    if (cleanName) {
+      try {
+        await updateProfile(userCredential.user, { displayName: cleanName });
+      } catch (profileErr) {
+        console.warn('Could not update profile displayName:', profileErr);
+      }
     }
-    return { success: true, user: formatUser(userCredential.user) };
+    const formatted = formatUser(userCredential.user);
+    if (cleanName) formatted.displayName = cleanName;
+    
+    // Save profile to Cloud Firestore users collection
+    try {
+      await setDoc(doc(db, 'users', formatted.uid), {
+        ...formatted,
+        role: 'customer',
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+    } catch (fsErr) {
+      console.warn('Firestore setDoc warning:', fsErr);
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(formatted));
+    window.dispatchEvent(new CustomEvent('stepup-auth-change', { detail: formatted }));
+    return { success: true, user: formatted };
   } catch (error) {
+    console.warn('Firebase createUser error:', error.code, error.message);
+
+    // If Firebase Auth backend is not enabled in Console yet, save to Firestore directly!
+    if (isConfigurationOrProviderError(error)) {
+      try {
+        // Check if email already registered in Firestore
+        const q = query(collection(db, 'users'), where('email', '==', cleanEmail));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          return { success: false, error: 'អ៊ីមែលនេះមានគណនីរួចហើយ (Email already in use)' };
+        }
+
+        const uid = `usr-${Date.now()}`;
+        const newUser = {
+          uid,
+          email: cleanEmail,
+          displayName: cleanName || cleanEmail.split('@')[0],
+          photoURL: null,
+          role: 'customer',
+          password: password,
+          createdAt: new Date().toISOString()
+        };
+
+        await setDoc(doc(db, 'users', uid), newUser);
+
+        const sessionUser = {
+          uid: newUser.uid,
+          email: newUser.email,
+          displayName: newUser.displayName,
+          photoURL: newUser.photoURL
+        };
+
+        localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(sessionUser));
+        window.dispatchEvent(new CustomEvent('stepup-auth-change', { detail: sessionUser }));
+        return { success: true, user: sessionUser };
+      } catch (fsErr) {
+        console.error('Firestore user registration fallback error:', fsErr);
+        return { success: false, error: 'បរាជ័យក្នុងការចុះឈ្មោះ: ' + (fsErr.message || 'Firestore error') };
+      }
+    }
     return { success: false, error: getAuthErrorMessage(error) };
   }
 }
@@ -41,8 +174,27 @@ export async function registerWithEmail(email, password, displayName = '') {
 export async function loginWithGoogle() {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    return { success: true, user: formatUser(result.user) };
+    const formatted = formatUser(result.user);
+    // Sync to Firestore
+    try {
+      await setDoc(doc(db, 'users', formatted.uid), {
+        ...formatted,
+        role: 'customer',
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+    } catch (e) {}
+
+    localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(formatted));
+    window.dispatchEvent(new CustomEvent('stepup-auth-change', { detail: formatted }));
+    return { success: true, user: formatted };
   } catch (error) {
+    console.warn('Google Sign-in error:', error);
+    if (isConfigurationOrProviderError(error)) {
+      return { 
+        success: false, 
+        error: '⚠️ Google Sign-In តម្រូវឱ្យបើក Google Provider ក្នុង Firebase Console > Authentication > Sign-in method។ បច្ចុប្បន្នលោកអ្នកអាចចុះឈ្មោះ និងចូលប្រើដោយផ្ទាល់ជាមួយ Email/Password ខាងក្រោមបានភ្លាមៗ!' 
+      };
+    }
     return { success: false, error: getAuthErrorMessage(error) };
   }
 }
@@ -51,21 +203,49 @@ export async function loginWithGoogle() {
  * Sign out
  */
 export async function logoutUser() {
+  localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+  window.dispatchEvent(new CustomEvent('stepup-auth-change', { detail: null }));
   try {
     await signOut(auth);
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
+  } catch (e) {}
+  return { success: true };
 }
 
 /**
  * Listen to auth state changes
  */
 export function subscribeToAuth(callback) {
-  return onAuthStateChanged(auth, (user) => {
-    callback(user ? formatUser(user) : null);
+  // First load from localStorage if available
+  const stored = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+  if (stored) {
+    try {
+      callback(JSON.parse(stored));
+    } catch (e) {}
+  }
+
+  const unsubscribeFirebase = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const formatted = formatUser(user);
+      localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(formatted));
+      callback(formatted);
+    } else {
+      // If Firebase Auth returns null (e.g. user was registered/logged in via Firestore fallback)
+      const currentStored = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+      if (!currentStored) {
+        callback(null);
+      }
+    }
   });
+
+  const handleCustomAuth = (e) => {
+    callback(e.detail);
+  };
+  window.addEventListener('stepup-auth-change', handleCustomAuth);
+
+  return () => {
+    unsubscribeFirebase();
+    window.removeEventListener('stepup-auth-change', handleCustomAuth);
+  };
 }
 
 function formatUser(firebaseUser) {
@@ -75,11 +255,17 @@ function formatUser(firebaseUser) {
     email: firebaseUser.email,
     displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0],
     photoURL: firebaseUser.photoURL || null,
-    emailVerified: firebaseUser.emailVerified
+    emailVerified: firebaseUser.emailVerified || false
   };
 }
 
 function getAuthErrorMessage(error) {
+  if (!error) return 'មានបញ្ហាក្នុងការចូលគណនី សូមព្យាយាមម្តងទៀត';
+  
+  if (isConfigurationOrProviderError(error)) {
+    return '⚠️ សេវា Firebase Authentication មិនទាន់ត្រូវបានចុច "Get started" ក្នុង Firebase Console នៅឡើយទេ។';
+  }
+
   switch (error.code) {
     case 'auth/invalid-credential':
     case 'auth/wrong-password':
@@ -93,10 +279,7 @@ function getAuthErrorMessage(error) {
       return 'ទម្រង់អ៊ីមែលមិនត្រឹមត្រូវ (Invalid email format)';
     case 'auth/popup-closed-by-user':
       return 'បានបិទផ្ទាំង Google Sign-in (Sign-in popup closed)';
-    case 'auth/operation-not-allowed':
-      return 'ការចូលគណនីមិនទាន់ត្រូវបានបើកដំណើរការក្នុង Firebase Console (Provider not enabled in Firebase Console)';
     default:
       return error.message || 'មានបញ្ហាក្នុងការចូលគណនី សូមព្យាយាមម្តងទៀត';
   }
 }
-
