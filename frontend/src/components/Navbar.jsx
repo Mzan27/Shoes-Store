@@ -122,7 +122,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                 <span className="badge badge-hot" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>SHOES</span>
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '-2px' }}>
-                ហាងស្bែកជើងទាន់សម័យ
+                ហាងស្បែកជើងទាន់សម័យ
               </div>
             </div>
           </div>
