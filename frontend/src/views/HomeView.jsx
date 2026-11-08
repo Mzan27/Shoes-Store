@@ -5,7 +5,6 @@ import ProductCard from '../components/ProductCard';
 import { 
   ArrowRight, 
   Sparkles, 
-  Flame, 
   Tag, 
   Check, 
   Copy, 
@@ -300,7 +299,7 @@ export default function HomeView({ onOpenSizeGuide }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
               <div className="badge badge-hot" style={{ marginBottom: '8px' }}>
-                <Flame size={12} /> Bestseller Collections
+                Bestseller Collections
               </div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>ស្បែកជើងពេញនិយម (Featured Shoes)</h2>
             </div>
@@ -336,8 +335,8 @@ export default function HomeView({ onOpenSizeGuide }) {
             gap: '24px'
           }}>
             <div style={{ maxWidth: '600px' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }} className="badge badge-new">
-                <Send size={13} /> Telegram Bot Notification Integration
+              <div style={{ display: 'inline-flex', alignItems: 'center', marginBottom: '10px' }} className="badge badge-new">
+                Telegram Bot Notification Integration
               </div>
               <h3 style={{ fontSize: '1.45rem', marginBottom: '10px' }}>
                 ប្រព័ន្ធផ្ញើសារដំណឹងការបញ្ជាទិញទៅ Telegram ភ្លាមៗ
