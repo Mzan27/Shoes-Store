@@ -79,10 +79,6 @@ export default function HomeView({ onOpenSizeGuide }) {
         }}>
           {/* Left Text */}
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '18px' }} className="badge badge-hot">
-              <Sparkles size={14} /> ស្បែកជើងម៉ូដថ្មីប្រចាំឆ្នាំ 2026
-            </div>
-            
             <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', lineHeight: 1.15, marginBottom: '18px', fontWeight: 800 }}>
               ជំហានប្រកបដោយ <br />
               <span className="gradient-text">ទំនុកចិត្ត និងផាសុកភាព</span>
