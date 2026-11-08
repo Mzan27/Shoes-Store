@@ -186,8 +186,7 @@ export default function HomeView({ onOpenSizeGuide }) {
           flexWrap: 'wrap',
           gap: '16px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Flame size={22} color="#ff5e36" />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>
               ប្រូម៉ូសិនពិសេស៖ ទទួលបានការបញ្ចុះតម្លៃបន្ថែមភ្លាមៗ!
             </span>
