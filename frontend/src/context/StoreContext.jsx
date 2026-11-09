@@ -15,6 +15,20 @@ export function StoreProvider({ children }) {
   // Theme state
   const [theme, setTheme] = useState(() => localStorage.getItem('stepup_theme') || 'dark');
 
+  // Language state: 'km' (Khmer) or 'en' (English)
+  const [lang, setLang] = useState(() => localStorage.getItem('stepup_lang') || 'km');
+
+  useEffect(() => {
+    localStorage.setItem('stepup_lang', lang);
+  }, [lang]);
+
+  const toggleLang = () => {
+    setLang(prev => (prev === 'km' ? 'en' : 'km'));
+  };
+
+  // Helper translation function
+  const t = (km, en) => (lang === 'en' ? en : km);
+
   // Cart state persisted
   const [cart, setCart] = useState(() => {
     try {
@@ -263,7 +277,11 @@ export function StoreProvider({ children }) {
         currentUser,
         isAuthModalOpen,
         setIsAuthModalOpen,
-        handleLogout
+        handleLogout,
+        lang,
+        setLang,
+        toggleLang,
+        t
       }}
     >
       {children}

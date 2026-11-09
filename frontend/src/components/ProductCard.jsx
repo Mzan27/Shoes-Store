@@ -3,7 +3,7 @@ import { useStore } from '../context/StoreContext';
 import { Heart, ShoppingBag, Star, Eye } from 'lucide-react';
 
 export default function ProductCard({ product }) {
-  const { navigateTo, addToCart, toggleWishlist, isProductInWishlist } = useStore();
+  const { navigateTo, addToCart, toggleWishlist, isProductInWishlist, t } = useStore();
   const [selectedSize, setSelectedSize] = useState((product.sizes && product.sizes[0]) || 40);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -125,7 +125,7 @@ export default function ProductCard({ product }) {
           opacity: isHovered ? 1 : 0,
           transition: 'opacity 0.2s ease'
         }}>
-          <Eye size={12} /> មើលលម្អិត
+          <Eye size={12} /> {t('មើលលម្អិត', 'View')}
         </div>
       </div>
 
@@ -222,7 +222,7 @@ export default function ProductCard({ product }) {
               title="Add to cart"
             >
               <ShoppingBag size={14} />
-              <span>ទិញ</span>
+              <span>{t('ទិញ', 'Buy')}</span>
             </button>
           </div>
         </div>

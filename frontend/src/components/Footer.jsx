@@ -3,7 +3,7 @@ import { useStore } from '../context/StoreContext';
 import { ShieldCheck, Truck, RefreshCw, Phone, Mail, MapPin, Send } from 'lucide-react';
 
 export default function Footer({ onOpenSizeGuide }) {
-  const { navigateTo, setSelectedCategory } = useStore();
+  const { navigateTo, setSelectedCategory, t } = useStore();
 
   const handleCategoryClick = (catId) => {
     setSelectedCategory(catId);
@@ -44,8 +44,8 @@ export default function Footer({ onOpenSizeGuide }) {
               <Truck size={26} />
             </div>
             <div>
-              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>ដឹកជញ្ជូនរហ័ស</h4>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>ភ្នំពេញ ១-២ ថ្ងៃ & ខេត្ត ២-៣ ថ្ងៃ</p>
+              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>{t('ដឹកជញ្ជូនរហ័ស', 'Fast Delivery')}</h4>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{t('ភ្នំពេញ ១-២ ថ្ងៃ & ខេត្ត ២-៣ ថ្ងៃ', 'Phnom Penh 1-2 days & Provinces 2-3 days')}</p>
             </div>
           </div>
 
@@ -54,8 +54,8 @@ export default function Footer({ onOpenSizeGuide }) {
               width: '50px',
               height: '50px',
               borderRadius: '12px',
-              background: 'rgba(0, 210, 255, 0.15)',
-              color: '#00d2ff',
+              background: 'rgba(59, 130, 246, 0.15)',
+              color: 'var(--accent-secondary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -63,8 +63,8 @@ export default function Footer({ onOpenSizeGuide }) {
               <RefreshCw size={26} />
             </div>
             <div>
-              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>ប្តូរទំហំ Size ៧ ថ្ងៃ</h4>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>មិនត្រូវទំហំ អាចប្តូរបានដោយឥតគិតថ្លៃ</p>
+              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>{t('ប្តូរទំហំ Size ៧ ថ្ងៃ', '7-Day Size Exchange')}</h4>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{t('មិនត្រូវទំហំ អាចប្តូរបានដោយឥតគិតថ្លៃ', 'Free exchange if size does not fit')}</p>
             </div>
           </div>
 
@@ -82,8 +82,8 @@ export default function Footer({ onOpenSizeGuide }) {
               <ShieldCheck size={26} />
             </div>
             <div>
-              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>ទូទាត់ KHQR & COD</h4>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>ស្កេន Bakong KHQR ឬបង់លុយពេលដល់ផ្ទះ</p>
+              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>{t('ទូទាត់ KHQR & COD', 'KHQR & COD Payment')}</h4>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{t('ស្កេន Bakong KHQR ឬបង់លុយពេលដល់ផ្ទះ', 'Bakong KHQR or Cash on Delivery')}</p>
             </div>
           </div>
 
@@ -101,8 +101,8 @@ export default function Footer({ onOpenSizeGuide }) {
               <Send size={26} />
             </div>
             <div>
-              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>Telegram Notifier</h4>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>ផ្ញើសារដំណឹងបញ្ជាទិញទៅ Telegram ភ្លាមៗ</p>
+              <h4 style={{ fontSize: '1rem', marginBottom: '4px' }}>{t('Telegram Notifier', 'Telegram Notifier')}</h4>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{t('ផ្ញើសារដំណឹងបញ្ជាទិញទៅ Telegram ភ្លាមៗ', 'Instant order alerts to Telegram')}</p>
             </div>
           </div>
         </div>
@@ -122,7 +122,10 @@ export default function Footer({ onOpenSizeGuide }) {
             <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>STEP<span style={{ color: 'var(--accent-primary)' }}>UP</span></span>
           </div>
           <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '20px' }}>
-            Shoes Store E-Commerce Website - ហាងលក់ស្បែកជើងទូទៅគ្រប់ប្រភេទ (Everyday & All-Type Footwear) គុណភាពខ្ពស់ តម្លៃសមរម្យ ម៉ូដទាន់សម័យ និងមានសេវាកម្មដឹកជញ្ជូនរហ័សទូទាំងប្រទេសកម្ពុជា។
+            {t(
+              'Shoes Store E-Commerce Website - ហាងលក់ស្បែកជើងទូទៅគ្រប់ប្រភេទ (Everyday & All-Type Footwear) គុណភាពខ្ពស់ តម្លៃសមរម្យ ម៉ូដទាន់សម័យ និងមានសេវាកម្មដឹកជញ្ជូនរហ័សទូទាំងប្រទេសកម្ពុជា។',
+              'Shoes Store E-Commerce - Everyday & all-type premium footwear with affordable pricing, modern styles, and fast delivery across Cambodia.'
+            )}
           </p>
           <div style={{ display: 'flex', gap: '12px' }}>
             <span className="badge badge-hot">KHQR Bakong</span>
@@ -132,14 +135,16 @@ export default function Footer({ onOpenSizeGuide }) {
 
         {/* Categories */}
         <div>
-          <h4 style={{ fontSize: '1.05rem', marginBottom: '18px', color: 'var(--text-primary)' }}>ប្រភេទទំនិញ (Categories)</h4>
+          <h4 style={{ fontSize: '1.05rem', marginBottom: '18px', color: 'var(--text-primary)' }}>
+            {t('ប្រភេទទំនិញ (Categories)', 'Product Categories')}
+          </h4>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <li>
               <button 
                 onClick={() => handleCategoryClick('sneakers')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem' }}
               >
-                👟 ស្បែកជើងកីឡា (Sneakers)
+                👟 {t('ស្បែកជើងកីឡា (Sneakers)', 'Sneakers')}
               </button>
             </li>
             <li>
@@ -147,7 +152,7 @@ export default function Footer({ onOpenSizeGuide }) {
                 onClick={() => handleCategoryClick('formal')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem' }}
               >
-                👞 ស្បែកជើងធ្វើការ (Formal)
+                👞 {t('ស្បែកជើងធ្វើការ (Formal)', 'Formal Shoes')}
               </button>
             </li>
             <li>
@@ -155,7 +160,7 @@ export default function Footer({ onOpenSizeGuide }) {
                 onClick={() => handleCategoryClick('casual')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem' }}
               >
-                🥾 ស្បែកជើងស៊ក (Casual)
+                🥾 {t('ស្បែកជើងស៊ក (Casual)', 'Casual Slip-on')}
               </button>
             </li>
             <li>
@@ -163,15 +168,15 @@ export default function Footer({ onOpenSizeGuide }) {
                 onClick={() => handleCategoryClick('sandals')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.9rem' }}
               >
-                🩴 ស្បែកជើងផ្ទាត់ (Sandals)
+                🩴 {t('ស្បែកជើងផ្ទាត់ (Sandals)', 'Sandals & Slippers')}
               </button>
             </li>
             <li>
               <button 
                 onClick={() => handleCategoryClick('sale')}
-                style={{ background: 'none', border: 'none', color: '#ff7552', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}
+                style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}
               >
-                🔥 ទំនិញប្រូម៉ូសិន (Sale & Promotion)
+                🔥 {t('ទំនិញប្រូម៉ូសិន (Sale & Promotion)', 'Sale & Special Offers')}
               </button>
             </li>
           </ul>
@@ -179,14 +184,16 @@ export default function Footer({ onOpenSizeGuide }) {
 
         {/* Customer Service */}
         <div>
-          <h4 style={{ fontSize: '1.05rem', marginBottom: '18px', color: 'var(--text-primary)' }}>សេវាកម្មអតិថិជន</h4>
+          <h4 style={{ fontSize: '1.05rem', marginBottom: '18px', color: 'var(--text-primary)' }}>
+            {t('សេវាកម្មអតិថិជន', 'Customer Service')}
+          </h4>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
             <li>
               <button 
                 onClick={onOpenSizeGuide}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', textAlign: 'left', fontSize: '0.9rem' }}
               >
-                📏 តារាងវាស់ទំហំជើង (Size Guide)
+                📏 {t('តារាងវាស់ទំហំជើង (Size Guide)', 'Size Guide')}
               </button>
             </li>
             <li>
@@ -194,7 +201,7 @@ export default function Footer({ onOpenSizeGuide }) {
                 onClick={() => navigateTo('tracking')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', textAlign: 'left', fontSize: '0.9rem' }}
               >
-                🚚 តាមដានការបញ្ជាទិញ (Order Tracking)
+                🚚 {t('តាមដានការបញ្ជាទិញ (Order Tracking)', 'Order Tracking')}
               </button>
             </li>
             <li>
@@ -202,7 +209,7 @@ export default function Footer({ onOpenSizeGuide }) {
                 onClick={() => navigateTo('about')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', textAlign: 'left', fontSize: '0.9rem' }}
               >
-                🔄 គោលការណ៍ប្តូរទំហំជើង (7-Day Return)
+                🔄 {t('គោលការណ៍ប្តូរទំហំជើង (7-Day Return)', '7-Day Return Policy')}
               </button>
             </li>
             <li>
@@ -210,7 +217,7 @@ export default function Footer({ onOpenSizeGuide }) {
                 onClick={() => navigateTo('about')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', textAlign: 'left', fontSize: '0.9rem' }}
               >
-                ❓ សំណួរដែលសួរញឹកញាប់ (FAQ)
+                ❓ {t('សំណួរដែលសួរញឹកញាប់ (FAQ)', 'FAQ')}
               </button>
             </li>
           </ul>
@@ -218,7 +225,9 @@ export default function Footer({ onOpenSizeGuide }) {
 
         {/* Contact Info */}
         <div>
-          <h4 style={{ fontSize: '1.05rem', marginBottom: '18px', color: 'var(--text-primary)' }}>ទំនាក់ទំនងយើងខ្ញុំ</h4>
+          <h4 style={{ fontSize: '1.05rem', marginBottom: '18px', color: 'var(--text-primary)' }}>
+            {t('ទំនាក់ទំនងយើងខ្ញុំ', 'Contact Us')}
+          </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
             <div style={{ display: 'flex', gap: '10px' }}>
               <MapPin size={18} color="var(--accent-primary)" style={{ flexShrink: 0, marginTop: '3px' }} />

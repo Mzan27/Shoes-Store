@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function HomeView({ onOpenSizeGuide }) {
-  const { navigateTo, setSelectedCategory, showToast } = useStore();
+  const { navigateTo, setSelectedCategory, showToast, t } = useStore();
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -67,7 +67,7 @@ export default function HomeView({ onOpenSizeGuide }) {
       <section style={{
         position: 'relative',
         padding: '60px 0 80px',
-        background: 'radial-gradient(ellipse at top right, rgba(255, 94, 54, 0.15) 0%, rgba(0, 210, 255, 0.05) 50%, transparent 70%)',
+        background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, transparent 100%)',
         overflow: 'hidden'
       }}>
         <div className="container" style={{
@@ -78,13 +78,16 @@ export default function HomeView({ onOpenSizeGuide }) {
         }}>
           {/* Left Text */}
           <div>
-            <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', lineHeight: 1.15, marginBottom: '18px', fontWeight: 800 }}>
-              ជំហានប្រកបដោយ <br />
-              <span className="gradient-text">ទំនុកចិត្ត និងផាសុកភាព</span>
+            <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', lineHeight: 1.18, marginBottom: '18px', fontWeight: 800 }}>
+              {t('ជំហានប្រកបដោយ', 'Step Forward With')} <br />
+              <span className="gradient-text">{t('ទំនុកចិត្ត និងផាសុកភាព', 'Confidence & Comfort')}</span>
             </h1>
 
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '28px', maxWidth: '520px' }}>
-              ស្វែងរកស្បែកជើងគ្រប់ប្រភេទ Sneakers, Formal, Casual និង Sandals គុណភាពខ្ពស់ ធានាប្តូរ Size រយៈពេល ៧ ថ្ងៃ និងគាំទ្រការទូទាត់រហ័សតាម KHQR Bakong។
+              {t(
+                'ស្វែងរកស្បែកជើងគ្រប់ប្រភេទ Sneakers, Formal, Casual និង Sandals គុណភាពខ្ពស់ ធានាប្តូរ Size រយៈពេល ៧ ថ្ងៃ និងគាំទ្រការទូទាត់រហ័សតាម KHQR Bakong។',
+                'Discover premium shoes for every occasion: Sneakers, Formal, Casual and Sandals. 7-day size exchange guarantee with instant KHQR Bakong checkout.'
+              )}
             </p>
 
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
@@ -92,7 +95,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                 onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
                 className="btn btn-primary btn-lg"
               >
-                <span>ទស្សនាស្បែកជើងទាំងអស់</span>
+                <span>{t('ទស្សនាស្បែកជើងទាំងអស់', 'Shop All Shoes')}</span>
                 <ArrowRight size={18} />
               </button>
 
@@ -101,7 +104,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                 className="btn btn-secondary btn-lg"
               >
                 <Ruler size={18} />
-                <span>តារាងវាស់ទំហំ (Size Guide)</span>
+                <span>{t('តារាងវាស់ទំហំ (Size Guide)', 'Size Guide')}</span>
               </button>
             </div>
 
@@ -115,15 +118,15 @@ export default function HomeView({ onOpenSizeGuide }) {
             }}>
               <div>
                 <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>1,500+</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>គូស្បែកជើងក្នុងស្តុក</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('គូស្បែកជើងក្នុងស្តុក', 'Shoes in Stock')}</div>
               </div>
               <div>
                 <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--accent-primary)' }}>100%</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ធានាគុណភាពពិត</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('ធានាគុណភាពពិត', 'Authentic Quality')}</div>
               </div>
               <div>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#00d2ff' }}>KHQR</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Bakong ភ្លាមៗ</div>
+                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--accent-primary)' }}>KHQR</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('Bakong ភ្លាមៗ', 'Instant Bakong')}</div>
               </div>
             </div>
           </div>
@@ -132,11 +135,11 @@ export default function HomeView({ onOpenSizeGuide }) {
           <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{
               position: 'absolute',
-              width: '380px',
-              height: '380px',
+              width: '360px',
+              height: '360px',
               borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(255, 94, 54, 0.25) 0%, transparent 70%)',
-              filter: 'blur(40px)',
+              background: 'radial-gradient(circle, rgba(255, 87, 34, 0.12) 0%, transparent 70%)',
+              filter: 'blur(30px)',
               zIndex: 0
             }} />
 
@@ -149,8 +152,8 @@ export default function HomeView({ onOpenSizeGuide }) {
                   height: 'auto',
                   borderRadius: 'var(--radius-xl)',
                   boxShadow: 'var(--shadow-lg)',
-                  border: '1px solid var(--border-hover)',
-                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.6))'
+                  border: '1px solid var(--border-light)',
+                  filter: 'drop-shadow(0 15px 25px rgba(0,0,0,0.5))'
                 }}
               />
               {/* Floating Overlay Badge */}
@@ -177,7 +180,12 @@ export default function HomeView({ onOpenSizeGuide }) {
       </section>
 
       {/* Promotion Bar with Click-to-copy codes */}
-      <section style={{ padding: '20px 0', background: 'rgba(255, 94, 54, 0.08)', borderTop: '1px solid rgba(255, 94, 54, 0.2)', borderBottom: '1px solid rgba(255, 94, 54, 0.2)' }}>
+      <section style={{ 
+        padding: '16px 0', 
+        background: 'rgba(255, 255, 255, 0.02)', 
+        borderTop: '1px solid var(--border-light)', 
+        borderBottom: '1px solid var(--border-light)' 
+      }}>
         <div className="container" style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -186,8 +194,8 @@ export default function HomeView({ onOpenSizeGuide }) {
           gap: '16px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-              ប្រូម៉ូសិនពិសេស៖ ទទួលបានការបញ្ចុះតម្លៃបន្ថែមភ្លាមៗ!
+            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+              {t('ប្រូម៉ូសិនពិសេស៖ ទទួលបានការបញ្ចុះតម្លៃបន្ថែមភ្លាមៗ!', 'Special Offers: Get Instant Extra Discounts!')}
             </span>
           </div>
 
@@ -196,13 +204,13 @@ export default function HomeView({ onOpenSizeGuide }) {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              background: 'rgba(17, 23, 38, 0.8)',
+              background: 'rgba(15, 23, 42, 0.7)',
               padding: '6px 14px',
               borderRadius: 'var(--radius-full)',
               border: '1px dashed var(--accent-primary)',
               fontSize: '0.85rem'
             }}>
-              <span>កូដ 10%៖ <strong>STEPUP10</strong></span>
+              <span>{t('កូដ 10%៖', '10% Code:')} <strong>STEPUP10</strong></span>
               <button 
                 onClick={() => handleCopyCode('STEPUP10')}
                 style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -216,16 +224,16 @@ export default function HomeView({ onOpenSizeGuide }) {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              background: 'rgba(17, 23, 38, 0.8)',
+              background: 'rgba(15, 23, 42, 0.7)',
               padding: '6px 14px',
               borderRadius: 'var(--radius-full)',
-              border: '1px dashed #00d2ff',
+              border: '1px dashed var(--border-hover)',
               fontSize: '0.85rem'
             }}>
-              <span>កូដ $20 Off៖ <strong>WELCOME20</strong></span>
+              <span>{t('កូដ $20 Off៖', '$20 Off Code:')} <strong>WELCOME20</strong></span>
               <button 
                 onClick={() => handleCopyCode('WELCOME20')}
-                style={{ background: 'none', border: 'none', color: '#00d2ff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 title="Copy code"
               >
                 {copiedCoupon === 'WELCOME20' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
@@ -235,19 +243,23 @@ export default function HomeView({ onOpenSizeGuide }) {
         </div>
       </section>
 
-      {/* Categories Grid (From Document Section 4.1 & 78-84) */}
-      <section style={{ padding: '70px 0' }}>
+      {/* Categories Grid */}
+      <section style={{ padding: '60px 0' }}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
-              <div className="badge badge-new" style={{ marginBottom: '8px' }}>រចនាសម្ព័ន្ធប្រភេទទំនិញ</div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>ប្រភេទស្បែកជើងចម្បង (Categories)</h2>
+              <div className="badge badge-new" style={{ marginBottom: '8px' }}>
+                {t('រចនាសម្ព័ន្ធប្រភេទទំនិញ', 'Categories')}
+              </div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
+                {t('ប្រភេទស្បែកជើងចម្បង', 'Featured Categories')}
+              </h2>
             </div>
             <button 
               onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
               className="btn btn-secondary btn-sm"
             >
-              <span>មើលទាំងអស់</span>
+              <span>{t('មើលទាំងអស់', 'View All')}</span>
               <ChevronRight size={16} />
             </button>
           </div>
@@ -293,21 +305,23 @@ export default function HomeView({ onOpenSizeGuide }) {
         </div>
       </section>
 
-      {/* Featured Shoes (ស្បែកជើងពេញនិយម) */}
-      <section style={{ padding: '40px 0 70px' }}>
+      {/* Featured Shoes */}
+      <section style={{ padding: '30px 0 60px' }}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
               <div className="badge badge-hot" style={{ marginBottom: '8px' }}>
                 Bestseller Collections
               </div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>ស្បែកជើងពេញនិយម (Featured Shoes)</h2>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
+                {t('ស្បែកជើងពេញនិយម', 'Featured Shoes')}
+              </h2>
             </div>
             <button 
               onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
               className="btn btn-secondary btn-sm"
             >
-              <span>ទស្សនាបន្ថែម</span>
+              <span>{t('ទស្សនាបន្ថែម', 'View More')}</span>
               <ChevronRight size={16} />
             </button>
           </div>
@@ -321,13 +335,13 @@ export default function HomeView({ onOpenSizeGuide }) {
       </section>
 
       {/* Telegram Real-Time Alert Banner Showcase */}
-      <section style={{ padding: '30px 0 60px' }}>
+      <section style={{ padding: '20px 0 50px' }}>
         <div className="container">
           <div className="glass-panel" style={{
             padding: '36px',
             borderRadius: 'var(--radius-lg)',
-            background: 'linear-gradient(135deg, rgba(30, 41, 66, 0.9), rgba(17, 23, 38, 0.95))',
-            border: '1px solid rgba(0, 210, 255, 0.3)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-light)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -336,39 +350,44 @@ export default function HomeView({ onOpenSizeGuide }) {
           }}>
             <div style={{ maxWidth: '600px' }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', marginBottom: '10px' }} className="badge badge-new">
-                Telegram Bot Notification Integration
+                Telegram Bot Integration
               </div>
               <h3 style={{ fontSize: '1.45rem', marginBottom: '10px' }}>
-                ប្រព័ន្ធផ្ញើសារដំណឹងការបញ្ជាទិញទៅ Telegram ភ្លាមៗ
+                {t('ប្រព័ន្ធផ្ញើសារដំណឹងការបញ្ជាទិញទៅ Telegram ភ្លាមៗ', 'Real-Time Order Notifications via Telegram')}
               </h3>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                រាល់ការកុម្ម៉ង់ទិញស្បែកជើងនៅលើ Website នឹងត្រូវរៀបចំបញ្ជូនសារជូនដំណឹងភ្លាមៗទៅកាន់ Telegram របស់ម្ចាស់ហាង (Email: <strong>chhoyyeanseou5@gmail.com</strong>) រួមមានលេខកូដទំនិញ ឈ្មោះ អតិថិជន លេខទូរស័ព្ទ ទំហំ Size និងទីតាំងដឹកជញ្ជូន។
+                {t(
+                  'រាល់ការកុម្ម៉ង់ទិញស្បែកជើងនៅលើ Website នឹងត្រូវរៀបចំបញ្ជូនសារជូនដំណឹងភ្លាមៗទៅកាន់ Telegram របស់ម្ចាស់ហាង (Email: chhoyyeanseou5@gmail.com) រួមមានលេខកូដទំនិញ ឈ្មោះ អតិថិជន លេខទូរស័ព្ទ ទំហំ Size និងទីតាំងដឹកជញ្ជូន។',
+                  'Every order placed on the website automatically sends instant notification alerts directly to Telegram for the store manager, including product codes, customer name, phone number, shoe size, and shipping address.'
+                )}
               </p>
             </div>
             <button 
               onClick={() => navigateTo('shop')}
               className="btn btn-primary btn-lg"
             >
-              <span>សាកល្បងបញ្ជាទិញឥឡូវនេះ</span>
+              <span>{t('សាកល្បងបញ្ជាទិញឥឡូវនេះ', 'Shop Now')}</span>
               <ArrowRight size={18} />
             </button>
           </div>
         </div>
       </section>
 
-      {/* New Shoe Arrivals (ស្បែកជើងមកដល់ថ្មី) */}
+      {/* New Shoe Arrivals */}
       <section style={{ padding: '20px 0 80px' }}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
               <div className="badge badge-new" style={{ marginBottom: '8px' }}>New Arrivals 2026</div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>ស្បែកជើងមកដល់ថ្មី (New Arrivals)</h2>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
+                {t('ស្បែកជើងមកដល់ថ្មី', 'New Shoe Arrivals')}
+              </h2>
             </div>
             <button 
               onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
               className="btn btn-secondary btn-sm"
             >
-              <span>មើលទាំងអស់</span>
+              <span>{t('មើលទាំងអស់', 'View All')}</span>
               <ChevronRight size={16} />
             </button>
           </div>

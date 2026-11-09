@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 export default function ShopView({ onOpenSizeGuide }) {
-  const { selectedCategory, setSelectedCategory, searchQuery, setSearchQuery } = useStore();
+  const { selectedCategory, setSelectedCategory, searchQuery, setSearchQuery, t } = useStore();
   
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -87,13 +87,13 @@ export default function ShopView({ onOpenSizeGuide }) {
         {/* Header Title */}
         <div style={{ marginBottom: '30px' }}>
           <div className="badge badge-hot" style={{ marginBottom: '8px' }}>
-            Shop Catalog • ស្បែកជើងទាំងអស់
+            {t('Shop Catalog • ស្បែកជើងទាំងអស់', 'Shop Catalog • All Footwear')}
           </div>
           <h1 style={{ fontSize: '2.2rem', fontWeight: 800 }}>
-            កាតាឡុកស្បែកជើង <span className="gradient-text">Shoes Store</span>
+            {t('កាតាឡុកស្បែកជើង', 'Footwear Catalog')} <span className="gradient-text">STEPUP</span>
           </h1>
           <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)' }}>
-            ជ្រើសរើសស្បែកជើងដែលត្រូវនឹងស្ទីល និងទំហំជើងរបស់អ្នក ជាមួយនឹងគុណភាពល្អបំផុត
+            {t('ជ្រើសរើសស្បែកជើងដែលត្រូវនឹងស្ទីល និងទំហំជើងរបស់អ្នក ជាមួយនឹងគុណភាពល្អបំផុត', 'Find shoes that match your unique style and size with guaranteed authentic quality.')}
           </p>
         </div>
 

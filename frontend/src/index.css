@@ -1,23 +1,23 @@
 :root {
   --font-main: 'Plus Jakarta Sans', 'Kantumruy Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   
-  /* Color Palette - Premium Sneaker & Luxury E-Commerce Theme */
-  --bg-primary: #0a0e17;
-  --bg-secondary: #111726;
-  --bg-card: rgba(22, 30, 49, 0.75);
-  --bg-card-hover: rgba(30, 41, 66, 0.9);
-  --bg-glass: rgba(17, 23, 38, 0.7);
+  /* Color Palette - Clean, Simple & Modern E-Commerce Theme */
+  --bg-primary: #0a0d14;
+  --bg-secondary: #0f172a;
+  --bg-card: rgba(15, 23, 42, 0.75);
+  --bg-card-hover: rgba(30, 41, 59, 0.85);
+  --bg-glass: rgba(10, 13, 20, 0.85);
   
   --border-light: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(255, 255, 255, 0.18);
-  --border-active: #ff5e36;
+  --border-active: #ff5722;
   
-  --accent-primary: #ff5e36;
-  --accent-primary-hover: #ff7552;
-  --accent-primary-glow: rgba(255, 94, 54, 0.35);
+  --accent-primary: #ff5722;
+  --accent-primary-hover: #f4511e;
+  --accent-primary-glow: rgba(255, 87, 34, 0.2);
   
-  --accent-secondary: #00d2ff;
-  --accent-secondary-hover: #33dcff;
+  --accent-secondary: #3b82f6;
+  --accent-secondary-hover: #60a5fa;
   
   --accent-gold: #f59e0b;
   --accent-green: #10b981;
@@ -29,10 +29,10 @@
   --text-muted: #64748b;
   --text-dark: #0f172a;
   
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 25px var(--accent-primary-glow);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 4px 16px var(--accent-primary-glow);
   
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -112,7 +112,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #ff5e36 0%, #ff9900 50%, #00d2ff 100%);
+  color: var(--accent-primary);
+  background: linear-gradient(135deg, #ff5722 0%, #ff784e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -160,14 +161,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), #ff7b47);
+  background: var(--accent-primary);
   color: #ffffff;
-  box-shadow: 0 4px 18px var(--accent-primary-glow);
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.25);
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--accent-primary-hover), #ff8c5a);
+  background: var(--accent-primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 94, 54, 0.5);
+  box-shadow: 0 6px 16px rgba(255, 87, 34, 0.35);
 }
 .btn-primary:active {
   transform: translateY(0);
@@ -228,14 +229,14 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
 }
 .badge-hot {
-  background: rgba(255, 94, 54, 0.2);
-  color: #ff7552;
-  border: 1px solid rgba(255, 94, 54, 0.4);
+  background: rgba(255, 87, 34, 0.12);
+  color: #ff5722;
+  border: 1px solid rgba(255, 87, 34, 0.25);
 }
 .badge-new {
-  background: rgba(0, 210, 255, 0.2);
-  color: #33dcff;
-  border: 1px solid rgba(0, 210, 255, 0.4);
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
 }
 .badge-sale {
   background: rgba(239, 68, 68, 0.25);
