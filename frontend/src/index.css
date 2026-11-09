@@ -115,6 +115,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-primary);
   background: linear-gradient(135deg, #ff5722 0%, #ff784e 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
