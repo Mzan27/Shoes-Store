@@ -269,13 +269,13 @@ export default function Navbar({ onOpenSizeGuide }) {
                   color: lang === 'km' ? '#ffffff' : 'var(--text-secondary)',
                   border: 'none',
                   borderRadius: '16px',
-                  padding: '3px 8px',
-                  fontSize: '0.76rem',
+                  padding: '3px 10px',
+                  fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  justifyContent: 'center',
                   height: '26px',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
@@ -283,8 +283,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   boxShadow: lang === 'km' ? '0 2px 6px rgba(255, 87, 34, 0.3)' : 'none'
                 }}
               >
-                <span>🇰🇭</span>
-                <span>ខ្មែរ</span>
+                ខ្មែរ
               </button>
               <button
                 type="button"
@@ -294,13 +293,13 @@ export default function Navbar({ onOpenSizeGuide }) {
                   color: lang === 'en' ? '#ffffff' : 'var(--text-secondary)',
                   border: 'none',
                   borderRadius: '16px',
-                  padding: '3px 8px',
-                  fontSize: '0.76rem',
+                  padding: '3px 10px',
+                  fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  justifyContent: 'center',
                   height: '26px',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
@@ -308,8 +307,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   boxShadow: lang === 'en' ? '0 2px 6px rgba(255, 87, 34, 0.3)' : 'none'
                 }}
               >
-                <span>🇬🇧</span>
-                <span>EN</span>
+                EN
               </button>
             </div>
 
