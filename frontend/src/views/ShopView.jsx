@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../context/StoreContext';
 import * as api from '../services/api';
 import ProductCard from '../components/ProductCard';
-import { 
-  Filter, 
-  Search, 
-  SlidersHorizontal, 
-  RotateCcw, 
+import {
+  Filter,
+  Search,
+  SlidersHorizontal,
+  RotateCcw,
   Sparkles,
   ChevronDown
 } from 'lucide-react';
 
 export default function ShopView({ onOpenSizeGuide }) {
   const { selectedCategory, setSelectedCategory, searchQuery, setSearchQuery, t } = useStore();
-  
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -166,8 +166,8 @@ export default function ShopView({ onOpenSizeGuide }) {
             {/* Brand Selector */}
             <div style={{ marginBottom: '22px' }}>
               <label className="form-label" style={{ fontWeight: 700 }}>ម៉ាក / Brand</label>
-              <select 
-                value={selectedBrand} 
+              <select
+                value={selectedBrand}
                 onChange={(e) => setSelectedBrand(e.target.value)}
                 className="form-select"
               >
@@ -182,7 +182,7 @@ export default function ShopView({ onOpenSizeGuide }) {
             <div style={{ marginBottom: '22px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <label className="form-label" style={{ margin: 0, fontWeight: 700 }}>ទំហំ EU Size</label>
-                <button 
+                <button
                   onClick={onOpenSizeGuide}
                   style={{ background: 'none', border: 'none', color: '#00d2ff', fontSize: '0.72rem', cursor: 'pointer', textDecoration: 'underline' }}
                 >
@@ -219,7 +219,7 @@ export default function ShopView({ onOpenSizeGuide }) {
                   ${maxPrice}.00
                 </span>
               </div>
-              <input 
+              <input
                 type="range"
                 min="20"
                 max="180"
@@ -257,7 +257,7 @@ export default function ShopView({ onOpenSizeGuide }) {
               {/* Sort Dropdown */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>តម្រៀបតាម:</span>
-                <select 
+                <select
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value)}
                   className="form-select"

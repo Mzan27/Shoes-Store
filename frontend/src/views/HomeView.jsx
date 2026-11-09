@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import * as api from '../services/api';
 import ProductCard from '../components/ProductCard';
-import { 
-  ArrowRight, 
-  Sparkles, 
-  Tag, 
-  Check, 
-  Copy, 
-  Ruler, 
-  ChevronRight, 
-  ShieldCheck, 
+import {
+  ArrowRight,
+  Sparkles,
+  Tag,
+  Check,
+  Copy,
+  Ruler,
+  ChevronRight,
+  ShieldCheck,
   Award,
   Send
 } from 'lucide-react';
@@ -91,7 +91,7 @@ export default function HomeView({ onOpenSizeGuide }) {
             </p>
 
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-              <button 
+              <button
                 onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
                 className="btn btn-primary btn-lg"
               >
@@ -99,7 +99,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                 <ArrowRight size={18} />
               </button>
 
-              <button 
+              <button
                 onClick={onOpenSizeGuide}
                 className="btn btn-secondary btn-lg"
               >
@@ -144,8 +144,8 @@ export default function HomeView({ onOpenSizeGuide }) {
             }} />
 
             <div className="animate-float" style={{ position: 'relative', zIndex: 1, maxWidth: '480px', width: '100%' }}>
-              <img 
-                src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=85" 
+              <img
+                src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=85"
                 alt="Nike Air VaporMax Featured Shoe"
                 style={{
                   width: '100%',
@@ -180,11 +180,11 @@ export default function HomeView({ onOpenSizeGuide }) {
       </section>
 
       {/* Promotion Bar with Click-to-copy codes */}
-      <section style={{ 
-        padding: '16px 0', 
-        background: 'rgba(255, 255, 255, 0.02)', 
-        borderTop: '1px solid var(--border-light)', 
-        borderBottom: '1px solid var(--border-light)' 
+      <section style={{
+        padding: '16px 0',
+        background: 'rgba(255, 255, 255, 0.02)',
+        borderTop: '1px solid var(--border-light)',
+        borderBottom: '1px solid var(--border-light)'
       }}>
         <div className="container" style={{
           display: 'flex',
@@ -211,7 +211,7 @@ export default function HomeView({ onOpenSizeGuide }) {
               fontSize: '0.85rem'
             }}>
               <span>{t('កូដ 10%៖', '10% Code:')} <strong>STEPUP10</strong></span>
-              <button 
+              <button
                 onClick={() => handleCopyCode('STEPUP10')}
                 style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 title="Copy code"
@@ -231,7 +231,7 @@ export default function HomeView({ onOpenSizeGuide }) {
               fontSize: '0.85rem'
             }}>
               <span>{t('កូដ $20 Off៖', '$20 Off Code:')} <strong>WELCOME20</strong></span>
-              <button 
+              <button
                 onClick={() => handleCopyCode('WELCOME20')}
                 style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 title="Copy code"
@@ -255,7 +255,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                 {t('ប្រភេទស្បែកជើងចម្បង', 'Featured Categories')}
               </h2>
             </div>
-            <button 
+            <button
               onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
               className="btn btn-secondary btn-sm"
             >
@@ -317,7 +317,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                 {t('ស្បែកជើងពេញនិយម', 'Featured Shoes')}
               </h2>
             </div>
-            <button 
+            <button
               onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
               className="btn btn-secondary btn-sm"
             >
@@ -362,7 +362,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                 )}
               </p>
             </div>
-            <button 
+            <button
               onClick={() => navigateTo('shop')}
               className="btn btn-primary btn-lg"
             >
@@ -383,7 +383,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                 {t('ស្បែកជើងមកដល់ថ្មី', 'New Shoe Arrivals')}
               </h2>
             </div>
-            <button 
+            <button
               onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
               className="btn btn-secondary btn-sm"
             >
