@@ -153,11 +153,6 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
                   display: 'block'
                 }}
               />
-              {product.discountPercent > 0 && (
-                <span className="badge badge-sale" style={{ position: 'absolute', top: '16px', left: '16px' }}>
-                  បញ្ចុះតម្លៃ {product.discountPercent}%
-                </span>
-              )}
             </div>
 
             {/* Thumbnail selector */}

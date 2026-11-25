@@ -70,11 +70,6 @@ export default function ProductCard({ product }) {
 
         {/* Floating Badges */}
         <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {product.discountPercent > 0 && (
-            <span className="badge badge-sale">
-              -{product.discountPercent}%
-            </span>
-          )}
           {product.badge && (
             <span className="badge badge-hot">
               {product.badge}
