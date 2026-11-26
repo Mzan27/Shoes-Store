@@ -230,7 +230,7 @@ export default function HomeView({ onOpenSizeGuide }) {
               </button>
 
               <div style={{ display: 'flex', gap: '6px' }}>
-                {(allProducts.length > 0 ? allProducts.slice(0, 8) : [1, 2, 3, 4]).map((_, idx) => (
+                {(allProducts.length > 0 ? allProducts.slice(0, 12) : [1, 2, 3, 4]).map((_, idx) => (
                   <button
                     key={idx}
                     type="button"
@@ -353,7 +353,7 @@ export default function HomeView({ onOpenSizeGuide }) {
           </div>
 
           <div className="grid-products">
-            {featuredProducts.slice(0, 4).map(prod => (
+            {(Array.isArray(featuredProducts) ? featuredProducts : []).slice(0, 8).map(prod => (
               <ProductCard key={prod.id} product={prod} />
             ))}
           </div>
@@ -379,7 +379,7 @@ export default function HomeView({ onOpenSizeGuide }) {
           </div>
 
           <div className="grid-products">
-            {newArrivals.slice(0, 4).map(prod => (
+            {(Array.isArray(newArrivals) ? newArrivals : []).slice(0, 8).map(prod => (
               <ProductCard key={prod.id} product={prod} />
             ))}
           </div>

@@ -33,6 +33,7 @@ export default function CheckoutView() {
     showToast,
     storeSettings,
     currentUser,
+    lang,
     t
   } = useStore();
 
