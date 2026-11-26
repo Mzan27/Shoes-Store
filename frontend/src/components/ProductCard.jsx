@@ -88,7 +88,7 @@ export default function ProductCard({ product }) {
           }}
           title={isFavorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
         >
-          {isFavorite ? t('រក្សាទុក', 'Saved') : t('ចូលចិត្ត', 'Save')}
+          {isFavorite ? t('❤️ រក្សាទុក', '❤️ Saved') : t('🤍 ចូលចិត្ត', '🤍 Save')}
         </button>
 
         {/* Quick View overlay indicator */}
@@ -118,7 +118,7 @@ export default function ProductCard({ product }) {
               {product.brand}
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.78rem', color: '#f59e0b', fontWeight: 600 }}>
-              <span>{product.rating || '5.0'}</span>
+              <span>⭐ {product.rating || '5.0'}</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>({product.reviewCount || 0})</span>
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function ProductCard({ product }) {
               style={{ padding: '8px 14px' }}
               title="Add to cart"
             >
-              <span>{t('ទិញ', 'Buy')}</span>
+              <span>🛒 {t('ទិញ', 'Buy')}</span>
             </button>
           </div>
         </div>

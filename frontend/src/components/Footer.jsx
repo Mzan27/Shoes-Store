@@ -71,7 +71,7 @@ export default function Footer({ onOpenSizeGuide }) {
               justifyContent: 'center',
               color: '#ffffff'
             }}>
-              <span style={{ color: '#fff', fontWeight: 900, fontSize: '1.25rem', fontFamily: 'system-ui, sans-serif' }}>S</span>
+              <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>👟</span>
             </div>
             <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>STEP<span style={{ color: 'var(--accent-primary)' }}>UP</span></span>
           </div>

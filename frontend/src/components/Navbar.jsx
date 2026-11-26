@@ -73,7 +73,7 @@ export default function Navbar({ onOpenSizeGuide }) {
               boxShadow: '0 4px 12px rgba(255, 87, 34, 0.3)',
               flexShrink: 0
             }}>
-              <span style={{ color: '#fff', fontWeight: 900, fontSize: '1.25rem', fontFamily: 'system-ui, sans-serif' }}>S</span>
+              <span style={{ fontSize: '1.35rem', lineHeight: 1 }}>👟</span>
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', lineHeight: 1.1 }}>
@@ -133,7 +133,7 @@ export default function Navbar({ onOpenSizeGuide }) {
             <form onSubmit={handleSearchSubmit} className="nav-search-desktop" style={{ position: 'relative' }}>
               <input 
                 type="text"
-                placeholder={t('ស្វែងរកស្បែកជើង...', 'Search shoes...')}
+                placeholder={t('🔍 ស្វែងរកស្បែកជើង...', '🔍 Search shoes...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
@@ -189,7 +189,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   boxShadow: lang === 'km' ? '0 2px 6px rgba(255, 87, 34, 0.3)' : 'none'
                 }}
               >
-                ខ្មែរ
+                🇰🇭 ខ្មែរ
               </button>
               <button
                 type="button"
@@ -213,7 +213,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   boxShadow: lang === 'en' ? '0 2px 6px rgba(255, 87, 34, 0.3)' : 'none'
                 }}
               >
-                English
+                🇬🇧 English
               </button>
             </div>
 
@@ -234,7 +234,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                 whiteSpace: 'nowrap'
               }}
             >
-              {t('ចូលចិត្ត', 'Wishlist')}{wishlist.length > 0 ? ` (${wishlist.length})` : ''}
+              ❤️ {t('ចូលចិត្ត', 'Wishlist')}{wishlist.length > 0 ? ` (${wishlist.length})` : ''}
             </button>
 
             {/* Cart Button (Text Pill) */}
@@ -254,7 +254,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                 whiteSpace: 'nowrap'
               }}
             >
-              {t('កន្ត្រក', 'Cart')}{cartItemsCount > 0 ? ` (${cartItemsCount})` : ''}
+              🛒 {t('កន្ត្រក', 'Cart')}{cartItemsCount > 0 ? ` (${cartItemsCount})` : ''}
             </button>
 
             {/* Theme Toggle Button (Text Pill) */}
@@ -274,7 +274,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                 whiteSpace: 'nowrap'
               }}
             >
-              {theme === 'dark' ? t('ពន្លឺ', 'Light') : t('ងងឹត', 'Dark')}
+              {theme === 'dark' ? t('☀️ ពន្លឺ', '☀️ Light') : t('🌙 ងងឹត', '🌙 Dark')}
             </button>
 
             {/* User Account / Sign In */}
@@ -333,7 +333,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   flexShrink: 0
                 }}
               >
-                <span>{t('ចូលគណនី', 'Sign In')}</span>
+                <span>👤 {t('ចូលគណនី', 'Sign In')}</span>
               </button>
             )}
 
@@ -361,7 +361,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                 flexShrink: 0
               }}
             >
-              <span>{(isAdminMode || currentView === 'admin') ? t('ហាង', 'Store') : 'Admin'}</span>
+              <span>{(isAdminMode || currentView === 'admin') ? t('🏪 ហាង', '🏪 Store') : '⚙️ Admin'}</span>
             </button>
 
             {/* Mobile Hamburger Toggle Button */}
@@ -459,7 +459,7 @@ export default function Navbar({ onOpenSizeGuide }) {
             <form onSubmit={handleSearchSubmit} style={{ width: '100%' }}>
               <input 
                 type="text"
-                placeholder={t('ស្វែងរកស្បែកជើង...', 'Search shoes...')}
+                placeholder={t('🔍 ស្វែងរកស្បែកជើង...', '🔍 Search shoes...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{

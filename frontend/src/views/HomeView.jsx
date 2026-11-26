@@ -99,14 +99,14 @@ export default function HomeView({ onOpenSizeGuide }) {
                 onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
                 className="btn btn-primary btn-lg"
               >
-                <span>{t('ទស្សនាស្បែកជើងទាំងអស់', 'Shop All Shoes')}</span>
+                <span>👟 {t('ទស្សនាស្បែកជើងទាំងអស់', 'Shop All Shoes')}</span>
               </button>
 
               <button
                 onClick={onOpenSizeGuide}
                 className="btn btn-secondary btn-lg"
               >
-                <span>{t('តារាងវាស់ទំហំ', 'Size Guide')}</span>
+                <span>📏 {t('តារាងវាស់ទំហំ', 'Size Guide')}</span>
               </button>
             </div>
 
@@ -226,7 +226,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                   fontWeight: 700
                 }}
               >
-                {t('ថយក្រោយ', 'Prev')}
+                ⬅️ {t('ថយក្រោយ', 'Prev')}
               </button>
 
               <div style={{ display: 'flex', gap: '6px' }}>
@@ -263,7 +263,7 @@ export default function HomeView({ onOpenSizeGuide }) {
                   fontWeight: 700
                 }}
               >
-                {t('បន្ទាប់', 'Next')}
+                {t('បន្ទាប់', 'Next')} ➡️
               </button>
             </div>
           </div>
@@ -286,7 +286,7 @@ export default function HomeView({ onOpenSizeGuide }) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
-              {t('ប្រូម៉ូសិនពិសេស៖ ទទួលបានការបញ្ចុះតម្លៃបន្ថែមភ្លាមៗ!', 'Special Offers: Get Instant Extra Discounts!')}
+              🔥 {t('ប្រូម៉ូសិនពិសេស៖ ទទួលបានការបញ្ចុះតម្លៃបន្ថែមភ្លាមៗ!', 'Special Offers: Get Instant Extra Discounts!')}
             </span>
           </div>
 
@@ -338,7 +338,7 @@ export default function HomeView({ onOpenSizeGuide }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
               <div className="badge badge-hot" style={{ marginBottom: '8px' }}>
-                {t('បណ្តុំស្បែកជើងពេញនិយម', 'Bestseller Collections')}
+                🔥 {t('បណ្តុំស្បែកជើងពេញនិយម', 'Bestseller Collections')}
               </div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
                 {t('ស្បែកជើងពេញនិយម', 'Featured Shoes')}
@@ -365,7 +365,7 @@ export default function HomeView({ onOpenSizeGuide }) {
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
-              <div className="badge badge-new" style={{ marginBottom: '8px' }}>{t('ទំនិញមកដល់ថ្មី ២០២៦', 'New Arrivals 2026')}</div>
+              <div className="badge badge-new" style={{ marginBottom: '8px' }}>✨ {t('ទំនិញមកដល់ថ្មី ២០២៦', 'New Arrivals 2026')}</div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
                 {t('ស្បែកជើងមកដល់ថ្មី', 'New Shoe Arrivals')}
               </h2>
