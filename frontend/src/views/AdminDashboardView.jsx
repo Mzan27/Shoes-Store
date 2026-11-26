@@ -34,7 +34,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboardView() {
-  const { showToast, storeSettings, setStoreSettings } = useStore();
+  const { showToast, storeSettings, setStoreSettings, t } = useStore();
   
   const [activeTab, setActiveTab] = useState('overview'); // overview, products, orders, coupons, reviews, telegram, database, settings
   const [dashboardData, setDashboardData] = useState(null);
@@ -325,20 +325,20 @@ export default function AdminDashboardView() {
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="badge badge-hot">ADMIN PORTAL</span>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Shoes Store Management</span>
+              <span className="badge badge-hot">{t('ផ្នែកគ្រប់គ្រង', 'ADMIN PORTAL')}</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{t('ប្រព័ន្ធគ្រប់គ្រងហាងស្បែកជើង', 'Shoes Store Management')}</span>
             </div>
             <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
-              ផ្ទាំងគ្រប់គ្រងប្រព័ន្ធ <span className="gradient-text">StepUp Shoes</span>
+              {t('ផ្ទាំងគ្រប់គ្រងប្រព័ន្ធ', 'Admin Dashboard')} <span className="gradient-text">StepUp Shoes</span>
             </h1>
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={handleTestTelegram} className="btn btn-secondary btn-sm" title="Test Telegram Alert">
-              <Send size={14} color="#00d2ff" /> Test Telegram Alert
+            <button onClick={handleTestTelegram} className="btn btn-secondary btn-sm" title={t('សាកល្បងផ្ញើសារ Telegram', 'Test Telegram Alert')}>
+              <Send size={14} color="#00d2ff" /> {t('សាកល្បង Telegram', 'Test Telegram Alert')}
             </button>
             <button onClick={loadAllAdminData} className="btn btn-secondary btn-sm">
-              <RefreshCw size={14} /> Refresh Data
+              <RefreshCw size={14} /> {t('ផ្ទុកទិន្នន័យឡើងវិញ', 'Refresh Data')}
             </button>
           </div>
         </div>
@@ -352,14 +352,14 @@ export default function AdminDashboardView() {
           marginBottom: '28px'
         }}>
           {[
-            { id: 'overview', label: 'ផ្ទាំងទូទៅ (Overview)', icon: LayoutDashboard },
-            { id: 'products', label: `ស្បែកជើង (${products.length})`, icon: Package },
-            { id: 'orders', label: `ការបញ្ជាទិញ (${orders.length})`, icon: ShoppingBag },
-            { id: 'coupons', label: `កូដប្រូម៉ូសិន (${coupons.length})`, icon: Tag },
-            { id: 'reviews', label: `ការវាយតម្លៃ (${reviews.length})`, icon: Star },
-            { id: 'telegram', label: `Telegram Logs (${telegramLogs.length})`, icon: Send },
-            { id: 'database', label: 'Firebase (Connected)', icon: Flame },
-            { id: 'settings', label: 'ការកំណត់ហាង (Settings)', icon: Settings }
+            { id: 'overview', label: t('ផ្ទាំងទូទៅ', 'Overview'), icon: LayoutDashboard },
+            { id: 'products', label: `${t('ស្បែកជើង', 'Shoes')} (${products.length})`, icon: Package },
+            { id: 'orders', label: `${t('ការបញ្ជាទិញ', 'Orders')} (${orders.length})`, icon: ShoppingBag },
+            { id: 'coupons', label: `${t('កូដប្រូម៉ូសិន', 'Coupons')} (${coupons.length})`, icon: Tag },
+            { id: 'reviews', label: `${t('ការវាយតម្លៃ', 'Reviews')} (${reviews.length})`, icon: Star },
+            { id: 'telegram', label: `${t('កំណត់ត្រា Telegram', 'Telegram Logs')} (${telegramLogs.length})`, icon: Send },
+            { id: 'database', label: t('មូលដ្ឋានទិន្នន័យ Firebase', 'Firebase (Connected)'), icon: Flame },
+            { id: 'settings', label: t('ការកំណត់ហាង', 'Settings'), icon: Settings }
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -401,53 +401,53 @@ export default function AdminDashboardView() {
             }}>
               <div className="glass-panel" style={{ padding: '22px', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '8px' }}>
-                  <span>ចំណូលលក់សរុប (Total Sales)</span>
+                  <span>{t('ចំណូលលក់សរុប', 'Total Sales')}</span>
                   <DollarSign size={18} color="#10b981" />
                 </div>
                 <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#10b981' }}>
                   ${Number(dashboardData?.metrics?.totalSales || dashboardData?.totalRevenue || 0).toFixed(2)}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  ពីការទូទាត់ជោគជ័យ (KHQR & Verified)
+                  {t('ពីការទូទាត់ជោគជ័យ (KHQR និងផ្ទៀងផ្ទាត់រួច)', 'From verified & KHQR payments')}
                 </div>
               </div>
 
               <div className="glass-panel" style={{ padding: '22px', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '8px' }}>
-                  <span>ការបញ្ជាទិញសរុប (Total Orders)</span>
+                  <span>{t('ការបញ្ជាទិញសរុប', 'Total Orders')}</span>
                   <ShoppingBag size={18} color="var(--accent-primary)" />
                 </div>
                 <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   {dashboardData?.metrics?.totalOrders ?? dashboardData?.totalOrders ?? orders.length}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#ff7552', marginTop: '4px' }}>
-                  កំពុងដំណើរការ: {dashboardData?.metrics?.pendingOrders ?? dashboardData?.pendingOrders ?? 0} Orders
+                  {t('កំពុងដំណើរការ:', 'Pending:')} {dashboardData?.metrics?.pendingOrders ?? dashboardData?.pendingOrders ?? 0} {t('ការបញ្ជាទិញ', 'Orders')}
                 </div>
               </div>
 
               <div className="glass-panel" style={{ padding: '22px', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '8px' }}>
-                  <span>ស្បែកជើងក្នុងស្តុក (Shoes)</span>
+                  <span>{t('ស្បែកជើងក្នុងស្តុក', 'Shoes in Stock')}</span>
                   <Package size={18} color="#00d2ff" />
                 </div>
                 <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#00d2ff' }}>
-                  {dashboardData?.metrics?.totalProducts ?? dashboardData?.totalProducts ?? products.length} ម៉ូដ
+                  {dashboardData?.metrics?.totalProducts ?? dashboardData?.totalProducts ?? products.length} {t('ម៉ូដ', 'Models')}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  ប្រភេទ Sneakers, Formal, Casual, Sandals
+                  {t('ស្បែកជើងកីឡា, ធ្វើការ, ស៊ក និងផ្ទាត់', 'Sneakers, Formal, Casual, Sandals')}
                 </div>
               </div>
 
               <div className="glass-panel" style={{ padding: '22px', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '8px' }}>
-                  <span>ការជូនដំណឹង (Telegram Logs)</span>
+                  <span>{t('ការជូនដំណឹង Telegram', 'Telegram Logs')}</span>
                   <Send size={18} color="#f59e0b" />
                 </div>
                 <div style={{ fontSize: '1.9rem', fontWeight: 800, color: '#f59e0b' }}>
                   {telegramLogs.length}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  ផ្ញើទៅ chhoyyeanseou5@gmail.com
+                  {t('ផ្ញើទៅ', 'Sent to')} chhoyyeanseou5@gmail.com
                 </div>
               </div>
             </div>
@@ -455,9 +455,9 @@ export default function AdminDashboardView() {
             {/* Recent Orders Overview */}
             <div className="glass-panel" style={{ padding: '26px', borderRadius: 'var(--radius-lg)', marginBottom: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>ការបញ្ជាទិញថ្មីៗ (Recent Orders)</h3>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>{t('ការបញ្ជាទិញថ្មីៗ', 'Recent Orders')}</h3>
                 <button onClick={() => setActiveTab('orders')} className="btn btn-secondary btn-sm">
-                  មើលទាំងអស់
+                  {t('មើលទាំងអស់', 'View All')}
                 </button>
               </div>
 
@@ -465,21 +465,21 @@ export default function AdminDashboardView() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid var(--border-light)' }}>
-                      <th style={{ padding: '12px' }}>Order ID</th>
-                      <th style={{ padding: '12px' }}>អតិថិជន</th>
-                      <th style={{ padding: '12px' }}>ទំនិញ</th>
-                      <th style={{ padding: '12px' }}>សរុប</th>
-                      <th style={{ padding: '12px' }}>ទូទាត់</th>
-                      <th style={{ padding: '12px' }}>ស្ថានភាព</th>
-                      <th style={{ padding: '12px' }}>សកម្មភាព</th>
+                      <th style={{ padding: '12px' }}>{t('លេខកូដ', 'Order ID')}</th>
+                      <th style={{ padding: '12px' }}>{t('អតិថិជន', 'Customer')}</th>
+                      <th style={{ padding: '12px' }}>{t('ទំនិញ', 'Items')}</th>
+                      <th style={{ padding: '12px' }}>{t('សរុប', 'Total')}</th>
+                      <th style={{ padding: '12px' }}>{t('ទូទាត់', 'Payment')}</th>
+                      <th style={{ padding: '12px' }}>{t('ស្ថានភាព', 'Status')}</th>
+                      <th style={{ padding: '12px' }}>{t('សកម្មភាព', 'Actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {orders.slice(0, 5).map(o => (
                       <tr key={o.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                         <td style={{ padding: '12px', fontWeight: 700, color: 'var(--accent-primary)' }}>#{o.orderNumber || o.id}</td>
-                        <td style={{ padding: '12px' }}>{o.customerName || o.name || 'អតិថិជន'} ({o.customerPhone || o.phone || '-'})</td>
-                        <td style={{ padding: '12px' }}>{o.items?.length || (Array.isArray(o.cart) ? o.cart.length : 1)} មុខ</td>
+                        <td style={{ padding: '12px' }}>{o.customerName || o.name || t('អតិថិជន', 'Customer')} ({o.customerPhone || o.phone || '-'})</td>
+                        <td style={{ padding: '12px' }}>{o.items?.length || (Array.isArray(o.cart) ? o.cart.length : 1)} {t('មុខ', 'items')}</td>
                         <td style={{ padding: '12px', fontWeight: 700 }}>${Number(o.totalAmount || o.grandTotal || o.total || 0).toFixed(2)}</td>
                         <td style={{ padding: '12px' }}>
                           <span className="badge" style={{ background: 'rgba(255,255,255,0.06)' }}>{o.paymentMethod || 'COD'}</span>
@@ -493,9 +493,9 @@ export default function AdminDashboardView() {
                               onClick={() => setShowOrderModal(o)} 
                               className="btn btn-secondary btn-sm" 
                               style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
-                              title="មើលព័ត៌មានលម្អិត"
+                              title={t('មើលព័ត៌មានលម្អិត', 'View Details')}
                             >
-                              <Eye size={13} /> <span>លម្អិត</span>
+                              <Eye size={13} /> <span>{t('លម្អិត', 'Details')}</span>
                             </button>
                             <button 
                               onClick={() => handleDeleteOrder(o.id)} 
@@ -515,9 +515,9 @@ export default function AdminDashboardView() {
                               }}
                               onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.3)'}
                               onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)'}
-                              title="លុបការបញ្ជាទិញនេះ"
+                              title={t('លុបការបញ្ជាទិញនេះ', 'Delete Order')}
                             >
-                              <Trash2 size={13} /> <span>លុប</span>
+                              <Trash2 size={13} /> <span>{t('លុប', 'Delete')}</span>
                             </button>
                           </div>
                         </td>
@@ -537,7 +537,7 @@ export default function AdminDashboardView() {
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <input 
                   type="text"
-                  placeholder="ស្វែងរកឈ្មោះ ឬ Brand..."
+                  placeholder={t('ស្វែងរកឈ្មោះ ឬ ម៉ាក...', 'Search name or brand...')}
                   value={productSearch}
                   onChange={(e) => setProductSearch(e.target.value)}
                   className="form-input"
@@ -546,7 +546,7 @@ export default function AdminDashboardView() {
               </div>
 
               <button onClick={handleOpenAddProduct} className="btn btn-primary btn-sm">
-                <Plus size={16} /> បន្ថែមស្បែកជើងថ្មី (Add Shoe)
+                <Plus size={16} /> {t('បន្ថែមស្បែកជើងថ្មី', 'Add New Shoe')}
               </button>
             </div>
 
@@ -556,8 +556,8 @@ export default function AdminDashboardView() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid var(--border-light)' }}>
-                      <th style={{ padding: '12px' }}>រូបភាព</th>
-                      <th style={{ padding: '12px' }}>ឈ្មោះស្បែកជើង</th>
+                      <th style={{ padding: '12px' }}>{t('រូបភាព', 'Image')}</th>
+                      <th style={{ padding: '12px' }}>{t('ឈ្មោះស្បែកជើង', 'Shoe Name')}</th>
                       <th style={{ padding: '12px' }}>Brand</th>
                       <th style={{ padding: '12px' }}>ប្រភេទ</th>
                       <th style={{ padding: '12px' }}>តម្លៃ</th>
@@ -613,18 +613,25 @@ export default function AdminDashboardView() {
           <div>
             {/* Filter Tabs */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
-              {['all', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(st => (
+              {[
+                { key: 'all', km: 'ទាំងអស់', en: 'All' },
+                { key: 'Confirmed', km: 'បានបញ្ជាក់', en: 'Confirmed' },
+                { key: 'Processing', km: 'កំពុងរៀបចំ', en: 'Processing' },
+                { key: 'Shipped', km: 'កំពុងដឹកជញ្ជូន', en: 'Shipped' },
+                { key: 'Delivered', km: 'បានដឹកដល់', en: 'Delivered' },
+                { key: 'Cancelled', km: 'បានបោះបង់', en: 'Cancelled' }
+              ].map(st => (
                 <button
-                  key={st}
-                  onClick={() => setOrderStatusFilter(st)}
+                  key={st.key}
+                  onClick={() => setOrderStatusFilter(st.key)}
                   className="btn btn-secondary btn-sm"
                   style={{
-                    borderColor: orderStatusFilter === st ? 'var(--accent-primary)' : 'var(--border-light)',
-                    background: orderStatusFilter === st ? 'rgba(255, 94, 54, 0.2)' : 'transparent',
-                    color: orderStatusFilter === st ? 'var(--accent-primary)' : 'var(--text-secondary)'
+                    borderColor: orderStatusFilter === st.key ? 'var(--accent-primary)' : 'var(--border-light)',
+                    background: orderStatusFilter === st.key ? 'rgba(255, 94, 54, 0.2)' : 'transparent',
+                    color: orderStatusFilter === st.key ? 'var(--accent-primary)' : 'var(--text-secondary)'
                   }}
                 >
-                  {st === 'all' ? 'ទាំងអស់' : st}
+                  {t(st.km, st.en)}
                 </button>
               ))}
             </div>
@@ -634,23 +641,23 @@ export default function AdminDashboardView() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid var(--border-light)' }}>
-                      <th style={{ padding: '12px' }}>Order ID</th>
-                      <th style={{ padding: '12px' }}>អតិថិជន</th>
-                      <th style={{ padding: '12px' }}>ទូរស័ព្ទ</th>
-                      <th style={{ padding: '12px' }}>ទីតាំងដឹកជញ្ជូន</th>
-                      <th style={{ padding: '12px' }}>សរុប</th>
-                      <th style={{ padding: '12px' }}>ការទូទាត់</th>
-                      <th style={{ padding: '12px' }}>ស្ថានភាព</th>
-                      <th style={{ padding: '12px' }}>សកម្មភាព</th>
+                      <th style={{ padding: '12px' }}>{t('លេខកូដ', 'Order ID')}</th>
+                      <th style={{ padding: '12px' }}>{t('អតិថិជន', 'Customer')}</th>
+                      <th style={{ padding: '12px' }}>{t('ទូរស័ព្ទ', 'Phone')}</th>
+                      <th style={{ padding: '12px' }}>{t('ទីតាំងដឹកជញ្ជូន', 'Shipping Address')}</th>
+                      <th style={{ padding: '12px' }}>{t('សរុប', 'Total')}</th>
+                      <th style={{ padding: '12px' }}>{t('ការទូទាត់', 'Payment')}</th>
+                      <th style={{ padding: '12px' }}>{t('ស្ថានភាព', 'Status')}</th>
+                      <th style={{ padding: '12px' }}>{t('សកម្មភាព', 'Actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {orders.map(o => (
                       <tr key={o.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                         <td style={{ padding: '12px', fontWeight: 800, color: 'var(--accent-primary)' }}>#{o.orderNumber || o.id}</td>
-                        <td style={{ padding: '12px', fontWeight: 600 }}>{o.customerName || o.name || 'អតិថិជន'}</td>
+                        <td style={{ padding: '12px', fontWeight: 600 }}>{o.customerName || o.name || t('អតិថិជន', 'Customer')}</td>
                         <td style={{ padding: '12px' }}>{o.customerPhone || o.phone || '-'}</td>
-                        <td style={{ padding: '12px', fontSize: '0.8rem' }}>{o.shippingAddress?.province || (typeof o.shippingAddress === 'string' ? o.shippingAddress : (o.address || 'ភ្នំពេញ'))}</td>
+                        <td style={{ padding: '12px', fontSize: '0.8rem' }}>{o.shippingAddress?.province || (typeof o.shippingAddress === 'string' ? o.shippingAddress : (o.address || t('ភ្នំពេញ', 'Phnom Penh')))}</td>
                         <td style={{ padding: '12px', fontWeight: 800 }}>${Number(o.totalAmount || o.grandTotal || o.total || 0).toFixed(2)}</td>
                         <td style={{ padding: '12px' }}>
                           <span className="badge badge-success">{o.paymentMethod || 'COD'}</span>
@@ -659,20 +666,19 @@ export default function AdminDashboardView() {
                           <select
                             value={o.orderStatus || o.status || 'Confirmed'}
                             onChange={(e) => handleUpdateOrderStatus(o.id, e.target.value)}
+                            className="form-select"
                             style={{
+                              width: 'auto',
                               padding: '4px 8px',
                               borderRadius: '6px',
-                              background: 'rgba(255,255,255,0.06)',
-                              border: '1px solid var(--border-light)',
-                              color: 'var(--text-primary)',
                               fontSize: '0.8rem'
                             }}
                           >
-                            <option value="Confirmed">Confirmed</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
+                            <option value="Confirmed">{t('បានបញ្ជាក់', 'Confirmed')}</option>
+                            <option value="Processing">{t('កំពុងរៀបចំ', 'Processing')}</option>
+                            <option value="Shipped">{t('កំពុងដឹកជញ្ជូន', 'Shipped')}</option>
+                            <option value="Delivered">{t('បានដឹកដល់', 'Delivered')}</option>
+                            <option value="Cancelled">{t('បានបោះបង់', 'Cancelled')}</option>
                           </select>
                         </td>
                         <td style={{ padding: '12px' }}>
@@ -681,9 +687,9 @@ export default function AdminDashboardView() {
                               onClick={() => setShowOrderModal(o)} 
                               className="btn btn-secondary btn-sm" 
                               style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
-                              title="មើលព័ត៌មានលម្អិត"
+                              title={t('មើលព័ត៌មានលម្អិត', 'View Details')}
                             >
-                              <Eye size={14} /> <span>លម្អិត</span>
+                              <Eye size={14} /> <span>{t('លម្អិត', 'Details')}</span>
                             </button>
                             <button 
                               onClick={() => handleDeleteOrder(o.id)} 
@@ -703,9 +709,9 @@ export default function AdminDashboardView() {
                               }}
                               onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.3)'}
                               onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)'}
-                              title="លុបការបញ្ជាទិញនេះ"
+                              title={t('លុបការបញ្ជាទិញនេះ', 'Delete Order')}
                             >
-                              <Trash2 size={13} /> <span>លុប</span>
+                              <Trash2 size={13} /> <span>{t('លុប', 'Delete')}</span>
                             </button>
                           </div>
                         </td>
@@ -722,9 +728,9 @@ export default function AdminDashboardView() {
         {activeTab === 'coupons' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>កូដប្រូម៉ូសិន (Coupons & Discounts)</h3>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>{t('កូដប្រូម៉ូសិន', 'Coupons & Discounts')}</h3>
               <button onClick={() => setShowCouponModal(true)} className="btn btn-primary btn-sm">
-                <Plus size={15} /> បង្កើតកូដថ្មី
+                <Plus size={15} /> {t('បង្កើតកូដថ្មី', 'Create Coupon')}
               </button>
             </div>
 
@@ -733,13 +739,13 @@ export default function AdminDashboardView() {
                 <div key={i} className="glass-panel" style={{ padding: '20px', borderRadius: 'var(--radius-md)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>{c.code}</span>
-                    <span className="badge badge-success">ACTIVE</span>
+                    <span className="badge badge-success">{t('កំពុងដំណើរការ', 'ACTIVE')}</span>
                   </div>
                   <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                     {c.description}
                   </p>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    ប្រភេទ: {c.discountType} • ចាប់ពី: ${c.minSpend}
+                    {t('ប្រភេទ:', 'Type:')} {c.discountType} • {t('ចាប់ពី:', 'Min spend:')} ${c.minSpend}
                   </div>
                 </div>
               ))}
@@ -750,7 +756,7 @@ export default function AdminDashboardView() {
         {/* ---------------- TAB 5: REVIEWS ---------------- */}
         {activeTab === 'reviews' && (
           <div className="glass-panel" style={{ padding: '24px', borderRadius: 'var(--radius-lg)' }}>
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '18px' }}>ការវាយតម្លៃរបស់អតិថិជន (Reviews Moderation)</h3>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '18px' }}>{t('ការវាយតម្លៃរបស់អតិថិជន', 'Customer Reviews')}</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {reviews.map(r => (
                 <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
@@ -778,13 +784,13 @@ export default function AdminDashboardView() {
           <div className="glass-panel" style={{ padding: '24px', borderRadius: 'var(--radius-lg)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>កំណត់ត្រាផ្ញើដំណឹង Telegram (Notification Logs)</h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{t('កំណត់ត្រាផ្ញើដំណឹង Telegram', 'Telegram Notification Logs')}</h3>
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  រាល់ពេលមាន Order ថ្មី ឬប្តូរ Status ប្រព័ន្ធនឹង dispatch ដំណឹងទៅកាន់ Telegram
+                  {t('រាល់ពេលមានការបញ្ជាទិញថ្មី ឬប្តូរស្ថានភាព ប្រព័ន្ធនឹងផ្ញើដំណឹងទៅកាន់ Telegram', 'Every new order or status update automatically dispatches a Telegram alert')}
                 </p>
               </div>
               <button onClick={handleTestTelegram} className="btn btn-primary btn-sm">
-                <Send size={14} /> ផ្ញើសារ Test
+                <Send size={14} /> {t('ផ្ញើសារសាកល្បង', 'Send Test Alert')}
               </button>
             </div>
 
