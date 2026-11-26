@@ -184,7 +184,7 @@ export default function ShopView({ onOpenSizeGuide }) {
                       }}
                     >
                       {getIcon(c.id)}
-                      <span>{c.khmerName ? t(c.khmerName, c.name) : c.name}</span>
+                      <span>{c.khmerName ? t(c.khmerName.split('/')[0], c.name) : c.name}</span>
                     </button>
                   );
                 })}
@@ -209,12 +209,12 @@ export default function ShopView({ onOpenSizeGuide }) {
             {/* Shoe Size Selector (EU 38-45) */}
             <div style={{ marginBottom: '22px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <label className="form-label" style={{ margin: 0, fontWeight: 700 }}>{t('ទំហំ EU Size', 'EU Size')}</label>
+                <label className="form-label" style={{ margin: 0, fontWeight: 700 }}>{t('ទំហំស្បែកជើង', 'EU Size')}</label>
                 <button
                   onClick={onOpenSizeGuide}
                   style={{ background: 'none', border: 'none', color: '#00d2ff', fontSize: '0.72rem', cursor: 'pointer', textDecoration: 'underline' }}
                 >
-                  Size Guide
+                  {t('តារាងវាស់ទំហំ', 'Size Guide')}
                 </button>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -284,18 +284,18 @@ export default function ShopView({ onOpenSizeGuide }) {
 
               {/* Sort Dropdown */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>តម្រៀបតាម:</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{t('តម្រៀបតាម:', 'Sort by:')}</span>
                 <select
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value)}
                   className="form-select"
                   style={{ width: 'auto', padding: '6px 12px', fontSize: '0.85rem' }}
                 >
-                  <option value="featured">ពេញនិយមបំផុត (Featured)</option>
-                  <option value="price-low">តម្លៃពីទាបទៅខ្ពស់ (Price Low-High)</option>
-                  <option value="price-high">តម្លៃពីខ្ពស់ទៅទាប (Price High-Low)</option>
-                  <option value="rating">ពិន្ទុវាយតម្លៃខ្ពស់ (Top Rated)</option>
-                  <option value="discount">បញ្ចុះតម្លៃច្រើនជាងគេ (Discount %)</option>
+                  <option value="featured">{t('ពេញនិយមបំផុត', 'Featured')}</option>
+                  <option value="price-low">{t('តម្លៃពីទាបទៅខ្ពស់', 'Price: Low to High')}</option>
+                  <option value="price-high">{t('តម្លៃពីខ្ពស់ទៅទាប', 'Price: High to Low')}</option>
+                  <option value="rating">{t('ពិន្ទុវាយតម្លៃខ្ពស់', 'Top Rated')}</option>
+                  <option value="discount">{t('បញ្ចុះតម្លៃច្រើនជាងគេ', 'Highest Discount')}</option>
                 </select>
               </div>
             </div>
@@ -305,13 +305,13 @@ export default function ShopView({ onOpenSizeGuide }) {
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
                 {selectedCategory !== 'all' && (
                   <span className="badge badge-hot" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }} onClick={() => setSelectedCategory('all')}>
-                    <span>ប្រភេទ: {selectedCategory}</span>
+                    <span>{t('ប្រភេទ:', 'Category:')} {selectedCategory}</span>
                     <X size={12} />
                   </span>
                 )}
                 {selectedBrand !== 'all' && (
                   <span className="badge badge-new" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }} onClick={() => setSelectedBrand('all')}>
-                    <span>Brand: {selectedBrand}</span>
+                    <span>{t('ម៉ាក:', 'Brand:')} {selectedBrand}</span>
                     <X size={12} />
                   </span>
                 )}

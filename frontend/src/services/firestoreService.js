@@ -17,10 +17,10 @@ import { db } from './firebase';
 
 // Static fallbacks for categories & brands
 const DEFAULT_CATEGORIES = [
-  { id: 'sneakers', name: 'Sneakers', khmerName: 'ស្បែកជើងកីឡា/Sneakers', icon: 'footprints', description: 'កីឡា ដើរកម្សាន្ត និងម៉ូដទាន់សម័យ' },
-  { id: 'formal', name: 'Formal', khmerName: 'ស្បែកជើងធ្វើការ/Formal', icon: 'briefcase', description: 'ស្បែកជើងការិយាល័យ ភាពថ្លៃថ្នូរ និងភាពទាក់ទាញ' },
-  { id: 'casual', name: 'Casual', khmerName: 'ស្បែកជើងស៊ក/Casual', icon: 'compass', description: 'ប្រើប្រាស់ប្រចាំថ្ងៃ ងាយស្រួលពាក់ និងស្រួលជើង' },
-  { id: 'sandals', name: 'Sandals', khmerName: 'ស្បែកជើងផ្ទាត់/Sandals', icon: 'sun', description: 'ផាសុកភាព ម៉ូដទាន់សម័យ និងធន់នឹងទឹក' },
+  { id: 'sneakers', name: 'Sneakers', khmerName: 'ស្បែកជើងកីឡា', icon: 'footprints', description: 'កីឡា ដើរកម្សាន្ត និងម៉ូដទាន់សម័យ' },
+  { id: 'formal', name: 'Formal', khmerName: 'ស្បែកជើងធ្វើការ', icon: 'briefcase', description: 'ស្បែកជើងការិយាល័យ ភាពថ្លៃថ្នូរ និងភាពទាក់ទាញ' },
+  { id: 'casual', name: 'Casual', khmerName: 'ស្បែកជើងស៊ក', icon: 'compass', description: 'ប្រើប្រាស់ប្រចាំថ្ងៃ ងាយស្រួលពាក់ និងស្រួលជើង' },
+  { id: 'sandals', name: 'Sandals', khmerName: 'ស្បែកជើងផ្ទាត់', icon: 'sun', description: 'ផាសុកភាព ម៉ូដទាន់សម័យ និងធន់នឹងទឹក' },
   { id: 'sale', name: 'Sale & Promotion', khmerName: 'ទំនិញប្រូម៉ូសិន', icon: 'flame', description: 'ការបញ្ចុះតម្លៃពិសេស' }
 ];
 
