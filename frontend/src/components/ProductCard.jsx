@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
-import { Heart, ShoppingBag, Star, Eye } from 'lucide-react';
 
 export default function ProductCard({ product }) {
-  const { navigateTo, addToCart, toggleWishlist, isProductInWishlist, t } = useStore();
+  const { navigateTo, addToCart, toggleWishlist, isProductInWishlist, lang, t } = useStore();
   const [selectedSize, setSelectedSize] = useState((product.sizes && product.sizes[0]) || 40);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -61,46 +60,35 @@ export default function ProductCard({ product }) {
             left: 0,
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
+            objectFit: (product.images && product.images[0] && product.images[0].endsWith('.png')) ? 'contain' : 'cover',
+            padding: (product.images && product.images[0] && product.images[0].endsWith('.png')) ? '14px' : '0',
             transition: 'transform 0.5s ease',
             transform: isHovered ? 'scale(1.08)' : 'scale(1)'
           }}
           loading="lazy"
         />
 
-        {/* Floating Badges */}
-        <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {product.badge && (
-            <span className="badge badge-hot">
-              {product.badge}
-            </span>
-          )}
-        </div>
 
         {/* Wishlist Button */}
         <button
           onClick={handleFavorite}
           style={{
             position: 'absolute',
-            top: '12px',
-            right: '12px',
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            background: isFavorite ? 'rgba(255, 94, 54, 0.9)' : 'rgba(17, 23, 38, 0.75)',
-            backdropFilter: 'blur(8px)',
+            top: '10px',
+            right: '10px',
+            padding: '3px 8px',
+            borderRadius: '12px',
+            background: isFavorite ? 'rgba(255, 94, 54, 0.95)' : 'rgba(17, 23, 38, 0.8)',
             border: 'none',
             color: '#fff',
             cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s ease',
+            fontSize: '0.72rem',
+            fontWeight: 700,
             zIndex: 2
           }}
           title={isFavorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
         >
-          <Heart size={16} fill={isFavorite ? '#fff' : 'none'} color={isFavorite ? '#fff' : 'currentColor'} />
+          {isFavorite ? t('រក្សាទុក', 'Saved') : t('ចូលចិត្ត', 'Save')}
         </button>
 
         {/* Quick View overlay indicator */}
@@ -112,15 +100,12 @@ export default function ProductCard({ product }) {
           backdropFilter: 'blur(4px)',
           borderRadius: '20px',
           padding: '4px 10px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
           fontSize: '0.72rem',
           color: '#fff',
           opacity: isHovered ? 1 : 0,
           transition: 'opacity 0.2s ease'
         }}>
-          <Eye size={12} /> {t('មើលលម្អិត', 'View')}
+          {t('មើលលម្អិត', 'View')}
         </div>
       </div>
 
@@ -132,8 +117,7 @@ export default function ProductCard({ product }) {
             <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>
               {product.brand}
             </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.8rem', color: '#f59e0b', fontWeight: 600 }}>
-              <Star size={13} fill="#f59e0b" color="#f59e0b" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.78rem', color: '#f59e0b', fontWeight: 600 }}>
               <span>{product.rating || '5.0'}</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>({product.reviewCount || 0})</span>
             </div>
@@ -149,10 +133,10 @@ export default function ProductCard({ product }) {
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
           }}>
-            {product.name}
+            {lang === 'km' && product.khmerName ? product.khmerName : product.name}
           </h4>
 
-          {/* Khmer Title */}
+          {/* Subtitle */}
           <p style={{
             fontSize: '0.8rem',
             color: 'var(--text-secondary)',
@@ -161,14 +145,16 @@ export default function ProductCard({ product }) {
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
           }}>
-            {product.khmerName}
+            {lang === 'km' 
+              ? (product.brand ? `ម៉ាក ${product.brand}` : 'ស្បែកជើងប្រណិត')
+              : (product.category ? (product.category.charAt(0).toUpperCase() + product.category.slice(1)) : product.brand)}
           </p>
         </div>
 
         <div>
           {/* Size Pills */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '14px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginRight: '4px' }}>EU:</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginRight: '4px' }}>{t('ទំហំ:', 'Size:')}</span>
             {product.sizes && product.sizes.slice(0, 5).map(sz => (
               <button
                 key={sz}
@@ -200,11 +186,11 @@ export default function ProductCard({ product }) {
             <div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                 <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  ${product.price.toFixed(2)}
+                  ${(Number(product?.price) || 0).toFixed(2)}
                 </span>
-                {product.originalPrice && product.originalPrice > product.price && (
+                {product?.originalPrice && Number(product.originalPrice) > Number(product.price) && (
                   <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', textDecoration: 'line-through' }}>
-                    ${product.originalPrice.toFixed(2)}
+                    ${(Number(product.originalPrice) || 0).toFixed(2)}
                   </span>
                 )}
               </div>
@@ -216,7 +202,6 @@ export default function ProductCard({ product }) {
               style={{ padding: '8px 14px' }}
               title="Add to cart"
             >
-              <ShoppingBag size={14} />
               <span>{t('ទិញ', 'Buy')}</span>
             </button>
           </div>

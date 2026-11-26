@@ -1,21 +1,5 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
-import { 
-  ShoppingBag, 
-  Heart, 
-  Search, 
-  Moon, 
-  Sun, 
-  LayoutDashboard, 
-  Menu, 
-  X, 
-  Ruler, 
-  Truck, 
-  User, 
-  LogOut,
-  ChevronRight,
-  Flame
-} from 'lucide-react';
 
 export default function Navbar({ onOpenSizeGuide }) {
   const { 
@@ -55,67 +39,6 @@ export default function Navbar({ onOpenSizeGuide }) {
 
   return (
     <>
-      {/* 1. TOP UTILITY ANNOUNCEMENT BAR */}
-      <div style={{
-        background: '#070a10',
-        color: '#94a3b8',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-        padding: '6px 20px',
-        fontSize: '0.8rem',
-        fontWeight: 500,
-        zIndex: 101,
-        position: 'relative'
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '8px'
-        }}>
-          {/* Promo Offer */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem' }}>
-            <span style={{ color: 'var(--accent-primary)', display: 'inline-flex', alignItems: 'center' }}>
-              <Flame size={13} style={{ marginRight: '3px' }} />
-            </span>
-            <span>
-              {t('កូដបញ្ចុះតម្លៃ 10%: ', '10% OFF Code: ')}
-              <strong style={{ color: 'var(--accent-primary)', textDecoration: 'underline' }}>STEPUP10</strong>
-              <span style={{ margin: '0 8px', opacity: 0.4 }}>|</span>
-              {t('ដឹកជញ្ជូនឥតគិតថ្លៃលើសពី $50', 'Free delivery on orders over $50')}
-            </span>
-          </div>
-
-          {/* Quick Utility Links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.78rem' }}>
-            <button 
-              onClick={onOpenSizeGuide}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#cbd5e1',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '2px 6px',
-                fontSize: '0.78rem',
-                fontFamily: 'inherit',
-                transition: 'color var(--transition-fast)'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-primary)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = '#cbd5e1'}
-            >
-              <Ruler size={13} /> {t('តារាងទំហំ (Size Guide)', 'Size Guide')}
-            </button>
-            <span style={{ opacity: 0.3 }}>|</span>
-            <span style={{ color: 'var(--text-muted)' }}>📞 012 345 678</span>
-          </div>
-        </div>
-      </div>
-
       {/* 2. MAIN GLASS NAVBAR */}
       <nav className="glass-nav">
         <div style={{
@@ -150,12 +73,7 @@ export default function Navbar({ onOpenSizeGuide }) {
               boxShadow: '0 4px 12px rgba(255, 87, 34, 0.3)',
               flexShrink: 0
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3.5 13h17l-1.5 5.5a2 2 0 0 1-1.9 1.5H6.9a2 2 0 0 1-1.9-1.5L3.5 13z"/>
-                <path d="M5.5 13l2.5-7h8l2.5 7"/>
-                <path d="M10 6v3"/>
-                <path d="M14 6v3"/>
-              </svg>
+              <span style={{ color: '#fff', fontWeight: 900, fontSize: '1.25rem', fontFamily: 'system-ui, sans-serif' }}>S</span>
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', lineHeight: 1.1 }}>
@@ -199,7 +117,6 @@ export default function Navbar({ onOpenSizeGuide }) {
               onClick={() => handleNav('tracking')}
               className={'nav-link-btn' + (!isAdminMode && currentView === 'tracking' ? ' active' : '')}
             >
-              <Truck size={15} />
               <span>{t('តាមដានការដឹក', 'Tracking')}</span>
             </button>
             <button 
@@ -220,7 +137,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
-                  padding: '7px 12px 7px 32px',
+                  padding: '7px 14px',
                   borderRadius: '20px',
                   background: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid var(--border-light)',
@@ -230,19 +147,8 @@ export default function Navbar({ onOpenSizeGuide }) {
                   transition: 'all 0.25s ease',
                   outline: 'none'
                 }}
-                onFocus={(e) => { e.target.style.width = '190px'; e.target.style.borderColor = 'var(--accent-primary)'; }}
+                onFocus={(e) => { e.target.style.width = '180px'; e.target.style.borderColor = 'var(--accent-primary)'; }}
                 onBlur={(e) => { e.target.style.width = '140px'; e.target.style.borderColor = 'var(--border-light)'; }}
-              />
-              <Search 
-                size={14} 
-                style={{
-                  position: 'absolute',
-                  left: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: 'var(--text-muted)',
-                  pointerEvents: 'none'
-                }} 
               />
             </form>
 
@@ -269,7 +175,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   color: lang === 'km' ? '#ffffff' : 'var(--text-secondary)',
                   border: 'none',
                   borderRadius: '16px',
-                  padding: '3px 10px',
+                  padding: '3px 12px',
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
@@ -293,7 +199,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   color: lang === 'en' ? '#ffffff' : 'var(--text-secondary)',
                   border: 'none',
                   borderRadius: '16px',
-                  padding: '3px 10px',
+                  padding: '3px 12px',
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
@@ -307,41 +213,68 @@ export default function Navbar({ onOpenSizeGuide }) {
                   boxShadow: lang === 'en' ? '0 2px 6px rgba(255, 87, 34, 0.3)' : 'none'
                 }}
               >
-                EN
+                English
               </button>
             </div>
 
-            {/* Wishlist Button */}
+            {/* Wishlist Button (Text Pill) */}
             <button 
               onClick={() => handleNav('wishlist')}
-              className="nav-icon-btn"
-              title={t('បញ្ជីចង់បាន', 'Wishlist')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '5px 12px',
+                borderRadius: '16px',
+                background: wishlist.length > 0 ? 'rgba(255, 94, 54, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid ' + (wishlist.length > 0 ? 'var(--accent-primary)' : 'var(--border-light)'),
+                color: wishlist.length > 0 ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
             >
-              <Heart size={18} color={wishlist.length > 0 ? 'var(--accent-primary)' : 'currentColor'} fill={wishlist.length > 0 ? 'var(--accent-primary)' : 'none'} />
-              {wishlist.length > 0 && <span className="nav-badge-dot" />}
+              {t('ចូលចិត្ត', 'Wishlist')}{wishlist.length > 0 ? ` (${wishlist.length})` : ''}
             </button>
 
-            {/* Cart Button */}
+            {/* Cart Button (Text Pill) */}
             <button 
               onClick={() => handleNav('cart')}
-              className="nav-icon-btn"
-              title={t('កន្ត្រកទំនិញ', 'Cart')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '5px 14px',
+                borderRadius: '16px',
+                background: cartItemsCount > 0 ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid ' + (cartItemsCount > 0 ? 'var(--accent-primary)' : 'var(--border-light)'),
+                color: cartItemsCount > 0 ? '#ffffff' : 'var(--text-secondary)',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
             >
-              <ShoppingBag size={18} />
-              {cartItemsCount > 0 && (
-                <span className="nav-cart-badge">
-                  {cartItemsCount}
-                </span>
-              )}
+              {t('កន្ត្រក', 'Cart')}{cartItemsCount > 0 ? ` (${cartItemsCount})` : ''}
             </button>
 
-            {/* Theme Toggle Button */}
+            {/* Theme Toggle Button (Text Pill) */}
             <button 
               onClick={toggleTheme}
-              className="nav-icon-btn"
-              title={theme === 'dark' ? t('ប្តូរទៅពន្លឺថ្ងៃ', 'Switch to Light') : t('ប្តូរទៅផ្ទៃងងឹត', 'Switch to Dark')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '5px 10px',
+                borderRadius: '16px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border-light)',
+                color: 'var(--text-secondary)',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
             >
-              {theme === 'dark' ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} color="#818cf8" />}
+              {theme === 'dark' ? t('ពន្លឺ', 'Light') : t('ងងឹត', 'Dark')}
             </button>
 
             {/* User Account / Sign In */}
@@ -352,7 +285,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
-                    padding: '3px 10px 3px 4px',
+                    padding: '3px 10px',
                     borderRadius: '20px',
                     background: 'rgba(255, 255, 255, 0.06)',
                     border: '1px solid var(--border-light)',
@@ -362,32 +295,24 @@ export default function Navbar({ onOpenSizeGuide }) {
                   }}
                   title={currentUser.email}
                 >
-                  <div style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: 'var(--accent-primary)',
-                    color: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    flexShrink: 0
-                  }}>
-                    {currentUser.displayName ? currentUser.displayName[0].toUpperCase() : (currentUser.email ? currentUser.email[0].toUpperCase() : 'U')}
-                  </div>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>
                     {currentUser.displayName || currentUser.email.split('@')[0]}
                   </span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="nav-icon-btn"
-                  title={t('ចាកចេញ', 'Sign Out')}
-                  style={{ width: '32px', height: '32px' }}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: '14px',
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    color: '#ef4444',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
                 >
-                  <LogOut size={14} />
+                  {t('ចាកចេញ', 'Sign Out')}
                 </button>
               </div>
             ) : (
@@ -396,23 +321,18 @@ export default function Navbar({ onOpenSizeGuide }) {
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
+                  padding: '5px 12px',
+                  borderRadius: '16px',
                   background: 'rgba(255, 255, 255, 0.06)',
                   border: '1px solid var(--border-light)',
                   color: 'var(--text-primary)',
-                  fontSize: '0.82rem',
+                  fontSize: '0.8rem',
                   fontWeight: 600,
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                  transition: 'all 0.2s ease'
+                  flexShrink: 0
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-primary)'; e.currentTarget.style.color = 'var(--accent-primary)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-light)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
               >
-                <User size={14} />
                 <span>{t('ចូលគណនី', 'Sign In')}</span>
               </button>
             )}
@@ -429,8 +349,7 @@ export default function Navbar({ onOpenSizeGuide }) {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
-                padding: '6px 10px',
+                padding: '5px 10px',
                 borderRadius: '16px',
                 border: '1px solid ' + ((isAdminMode || currentView === 'admin') ? 'var(--accent-primary)' : 'var(--border-light)'),
                 background: (isAdminMode || currentView === 'admin') ? 'rgba(255, 87, 34, 0.15)' : 'rgba(255, 255, 255, 0.04)',
@@ -439,12 +358,9 @@ export default function Navbar({ onOpenSizeGuide }) {
                 fontWeight: 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                flexShrink: 0,
-                transition: 'all 0.2s ease'
+                flexShrink: 0
               }}
-              title={isAdminMode || currentView === 'admin' ? t('ប្តូរទៅកាន់ហាង', 'Switch to Store') : t('ប្តូរទៅកាន់ Admin Panel', 'Switch to Admin')}
             >
-              <LayoutDashboard size={13} />
               <span>{(isAdminMode || currentView === 'admin') ? t('ហាង', 'Store') : 'Admin'}</span>
             </button>
 
@@ -452,9 +368,10 @@ export default function Navbar({ onOpenSizeGuide }) {
             <button
               onClick={() => setMobileMenuOpen(prev => !prev)}
               className="nav-icon-btn nav-mobile-toggle"
+              style={{ padding: '4px 10px', fontSize: '0.82rem', fontWeight: 700 }}
               aria-label="Toggle Mobile Navigation"
             >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {mobileMenuOpen ? t('បិទ', 'Close') : t('មីនុយ', 'Menu')}
             </button>
           </div>
         </div>
@@ -483,8 +400,63 @@ export default function Navbar({ onOpenSizeGuide }) {
             flexDirection: 'column',
             gap: '16px'
           }}>
+            {/* Language Switcher (2 Tabs: ខ្មែរ / English) in Mobile Menu */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                {t('ជ្រើសរើសភាសា', 'Select Language')}
+              </span>
+              <div 
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: '20px',
+                  padding: '2px',
+                  height: '32px'
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setLang('km')}
+                  style={{
+                    background: lang === 'km' ? 'var(--accent-primary)' : 'transparent',
+                    color: lang === 'km' ? '#ffffff' : 'var(--text-secondary)',
+                    border: 'none',
+                    borderRadius: '16px',
+                    padding: '3px 12px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: lang === 'km' ? '0 2px 6px rgba(255, 87, 34, 0.3)' : 'none'
+                  }}
+                >
+                  ខ្មែរ
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLang('en')}
+                  style={{
+                    background: lang === 'en' ? 'var(--accent-primary)' : 'transparent',
+                    color: lang === 'en' ? '#ffffff' : 'var(--text-secondary)',
+                    border: 'none',
+                    borderRadius: '16px',
+                    padding: '3px 12px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: lang === 'en' ? '0 2px 6px rgba(255, 87, 34, 0.3)' : 'none'
+                  }}
+                >
+                  English
+                </button>
+              </div>
+            </div>
+
             {/* Search inside Mobile Menu */}
-            <form onSubmit={handleSearchSubmit} style={{ position: 'relative', width: '100%' }}>
+            <form onSubmit={handleSearchSubmit} style={{ width: '100%' }}>
               <input 
                 type="text"
                 placeholder={t('ស្វែងរកស្បែកជើង...', 'Search shoes...')}
@@ -492,7 +464,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '10px 14px 10px 38px',
+                  padding: '10px 14px',
                   borderRadius: '12px',
                   background: 'rgba(255, 255, 255, 0.06)',
                   border: '1px solid var(--border-light)',
@@ -500,16 +472,6 @@ export default function Navbar({ onOpenSizeGuide }) {
                   fontSize: '0.9rem',
                   outline: 'none'
                 }}
-              />
-              <Search 
-                size={16} 
-                style={{
-                  position: 'absolute',
-                  left: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: 'var(--text-muted)'
-                }} 
               />
             </form>
 
@@ -533,7 +495,6 @@ export default function Navbar({ onOpenSizeGuide }) {
                 }}
               >
                 <span>{t('ទំព័រដើម', 'Home')}</span>
-                <ChevronRight size={16} />
               </button>
 
               <button
@@ -554,7 +515,6 @@ export default function Navbar({ onOpenSizeGuide }) {
                 }}
               >
                 <span>{t('ស្បែកជើងទាំងអស់', 'Shop All Footwear')}</span>
-                <ChevronRight size={16} />
               </button>
 
               <button
@@ -574,11 +534,7 @@ export default function Navbar({ onOpenSizeGuide }) {
                   textAlign: 'left'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Truck size={16} />
-                  <span>{t('តាមដានការដឹក', 'Order Tracking')}</span>
-                </div>
-                <ChevronRight size={16} />
+                <span>{t('តាមដានការដឹក', 'Order Tracking')}</span>
               </button>
 
               <button
@@ -599,7 +555,6 @@ export default function Navbar({ onOpenSizeGuide }) {
                 }}
               >
                 <span>{t('អំពីយើង & ទំនាក់ទំនង', 'About & Contact')}</span>
-                <ChevronRight size={16} />
               </button>
             </div>
 
@@ -609,8 +564,7 @@ export default function Navbar({ onOpenSizeGuide }) {
               className="btn btn-secondary"
               style={{ width: '100%', justifyContent: 'center' }}
             >
-              <Ruler size={16} />
-              <span>{t('តារាងវាស់ទំហំ (Size Guide)', 'Shoe Size Guide')}</span>
+              <span>{t('តារាងវាស់ទំហំ', 'Shoe Size Guide')}</span>
             </button>
           </div>
         </div>

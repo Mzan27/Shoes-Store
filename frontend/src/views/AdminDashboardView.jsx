@@ -133,7 +133,7 @@ export default function AdminDashboardView() {
     try {
       const res = await api.testDatabaseConnection();
       if (res.success) {
-        showToast(`✓ ${res.message}`);
+        showToast(res.message);
         const refreshed = await api.fetchDatabaseStatus();
         if (refreshed.success) setDbStatus(refreshed.data);
       } else {
@@ -195,14 +195,14 @@ export default function AdminDashboardView() {
       if (editingProduct) {
         const res = await api.updateProduct(editingProduct.id, productForm);
         if (res.success) {
-          showToast('✓ បានកែប្រែទិន្នន័យស្បែកជើងជោគជ័យ!');
+          showToast('បានកែប្រែទិន្នន័យស្បែកជើងជោគជ័យ!');
           setShowProductModal(false);
           loadAllAdminData();
         }
       } else {
         const res = await api.createProduct(productForm);
         if (res.success) {
-          showToast('✓ បានបន្ថែមស្បែកជើងថ្មីចូលក្នុងស្តុក!');
+          showToast('បានបន្ថែមស្បែកជើងថ្មីចូលក្នុងស្តុក!');
           setShowProductModal(false);
           loadAllAdminData();
         }
@@ -231,7 +231,7 @@ export default function AdminDashboardView() {
     try {
       const res = await api.updateOrderStatus(orderId, newStatus, `ស្ថានភាពបានប្តូរទៅជា ${newStatus}`);
       if (res.success) {
-        showToast(`✓ បានផ្លាស់ប្តូរស្ថានភាព Order ទៅជា ${newStatus}!`);
+        showToast(`បានផ្លាស់ប្តូរស្ថានភាព Order ទៅជា ${newStatus}!`);
         loadAllAdminData();
         setShowOrderModal(prev => prev ? ({
           ...prev,
@@ -256,7 +256,7 @@ export default function AdminDashboardView() {
 
         const res = await api.deleteOrder(orderId);
         if (res.success) {
-          showToast('✓ បានលុបការបញ្ជាទិញដោយជោគជ័យ!', 'info');
+          showToast('បានលុបការបញ្ជាទិញដោយជោគជ័យ!', 'info');
           await loadAllAdminData();
         } else {
           showToast(res.message || 'បរាជ័យក្នុងការលុប Order', 'error');
@@ -274,7 +274,7 @@ export default function AdminDashboardView() {
     try {
       const res = await api.sendTestTelegram();
       if (res.success) {
-        showToast('🔔 សារសាកល្បង Telegram ត្រូវបានបញ្ជូនជោគជ័យ!');
+        showToast('សារសាកល្បង Telegram ត្រូវបានបញ្ជូនជោគជ័យ!');
         loadAllAdminData();
       }
     } catch (err) {
@@ -288,7 +288,7 @@ export default function AdminDashboardView() {
     try {
       const res = await api.createCoupon(couponForm);
       if (res.success) {
-        showToast(`✓ បានបង្កើតកូដបញ្ចុះតម្លៃ ${couponForm.code}!`);
+        showToast(`បានបង្កើតកូដបញ្ចុះតម្លៃ ${couponForm.code}!`);
         setShowCouponModal(false);
         setCouponForm({ code: '', discountType: 'percentage', discountValue: 10, minSpend: 30, description: '' });
         loadAllAdminData();
@@ -358,7 +358,7 @@ export default function AdminDashboardView() {
             { id: 'coupons', label: `កូដប្រូម៉ូសិន (${coupons.length})`, icon: Tag },
             { id: 'reviews', label: `ការវាយតម្លៃ (${reviews.length})`, icon: Star },
             { id: 'telegram', label: `Telegram Logs (${telegramLogs.length})`, icon: Send },
-            { id: 'database', label: '🔥 Firebase (Connected)', icon: Flame },
+            { id: 'database', label: 'Firebase (Connected)', icon: Flame },
             { id: 'settings', label: 'ការកំណត់ហាង (Settings)', icon: Settings }
           ].map(tab => {
             const Icon = tab.icon;
@@ -757,7 +757,9 @@ export default function AdminDashboardView() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                       <strong>{r.customerName}</strong>
-                      <span style={{ color: '#f59e0b', fontSize: '0.85rem' }}>★ {r.rating}/5</span>
+                      <span style={{ color: '#f59e0b', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <Star size={13} fill="#f59e0b" /> {r.rating}/5
+                      </span>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>({r.date})</span>
                     </div>
                     <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>{r.comment}</p>
@@ -869,8 +871,9 @@ export default function AdminDashboardView() {
             </div>
 
             <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border-light)' }}>
-              <h4 style={{ fontSize: '1.1rem', marginBottom: '14px', color: 'var(--accent-primary)' }}>
-                💳 ព័ត៌មានវិធីសាស្ត្រទូទាត់ប្រាក់ (Payment Method Settings)
+              <h4 style={{ fontSize: '1.1rem', marginBottom: '14px', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CreditCard size={18} />
+                <span>ព័ត៌មានវិធីសាស្ត្រទូទាត់ប្រាក់ (Payment Method Settings)</span>
               </h4>
 
               <div className="form-group">
@@ -893,10 +896,10 @@ export default function AdminDashboardView() {
                       <button 
                         type="button" 
                         onClick={() => setStoreSettings({ ...storeSettings, khqrImage: '' })}
-                        style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '10px' }}
+                        style={{ position: 'absolute', top: 2, right: 2, background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         title="លុបរូបភាព"
                       >
-                        ✕
+                        <X size={12} />
                       </button>
                     </div>
                   ) : (
@@ -966,7 +969,7 @@ export default function AdminDashboardView() {
             <button 
               onClick={async () => {
                 await api.updateStoreSettings(storeSettings);
-                showToast('✓ បានរក្សាទុកការកំណត់ហាងជោគជ័យ!');
+                showToast('បានរក្សាទុកការកំណត់ហាងជោគជ័យ!');
               }}
               className="btn btn-primary btn-md"
             >
@@ -986,7 +989,7 @@ export default function AdminDashboardView() {
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>ស្ថានភាព Firebase</h3>
                 </div>
                 <span className="badge badge-success" style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  ✓ FIREBASE CONNECTED
+                  <Check size={13} /> FIREBASE CONNECTED
                 </span>
               </div>
 
@@ -1000,7 +1003,7 @@ export default function AdminDashboardView() {
                 lineHeight: 1.6
               }}>
                 <div style={{ color: '#ffb74d' }}>
-                  <strong>🔥 ភ្ជាប់ទៅកាន់ Google Cloud Firestore ដោយជោគជ័យ!</strong><br />
+                  <strong>ភ្ជាប់ទៅកាន់ Google Cloud Firestore ដោយជោគជ័យ!</strong><br />
                   ទិន្នន័យផលិតផល ការបញ្ជាទិញ កូដប្រូម៉ូសិន និងការកំណត់ទាំងអស់ត្រូវបាន Real-time Synchronize ជាមួយ Firebase Project <code>stepup-shoes-store-2bd6b</code>។
                 </div>
               </div>
@@ -1106,7 +1109,7 @@ export default function AdminDashboardView() {
                   style={{ width: '100%', marginTop: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
                   <RefreshCw size={16} className={testingDb ? 'spin' : ''} />
-                  <span>{testingDb ? 'កំពុងផ្ទៀងផ្ទាត់ការតភ្ជាប់...' : '🔄 ផ្ទៀងផ្ទាត់ការតភ្ជាប់ Firebase (Test & Sync Firestore)'}</span>
+                  <span>{testingDb ? 'កំពុងផ្ទៀងផ្ទាត់ការតភ្ជាប់...' : 'ផ្ទៀងផ្ទាត់ការតភ្ជាប់ Firebase (Test & Sync Firestore)'}</span>
                 </button>
 
                 <a 
@@ -1117,7 +1120,7 @@ export default function AdminDashboardView() {
                   style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
                 >
                   <ExternalLink size={16} />
-                  <span>🚀 បើកមើល Firebase Console (Firestore Data)</span>
+                  <span>បើកមើល Firebase Console (Firestore Data)</span>
                 </a>
               </div>
 
@@ -1133,7 +1136,7 @@ export default function AdminDashboardView() {
                 lineHeight: 1.6
               }}>
                 <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '6px' }}>
-                  🔥 ព័ត៌មានអំពី Firebase Backend & Security:
+                  ព័ត៌មានអំពី Firebase Backend & Security:
                 </strong>
                 ១. រាល់ទិន្នន័យផលិតផល ការបញ្ជាទិញ និងការកំណត់ត្រូវបានរក្សាទុកនៅលើ <strong>Google Cloud Firestore</strong> ដោយផ្ទាល់។<br />
                 ២. ប្រព័ន្ធ Authentication គាំទ្រ <strong>Email/Password</strong> និង <strong>Google Sign-In</strong> ជាមួយនឹង Firebase Auth SDK។<br />
@@ -1374,10 +1377,10 @@ export default function AdminDashboardView() {
 
           const currentStatus = (o.status || o.orderStatus || 'pending').toLowerCase();
           const paymentMethodDisplay = o.paymentMethod === 'khqr' 
-            ? '🇰🇭 KHQR (Bakong)' 
+            ? 'KHQR (Bakong)' 
             : o.paymentMethod === 'bank' 
-              ? '🏦 ធនាគារ (Bank Transfer)' 
-              : '🚚 សាច់ប្រាក់ផ្ទាល់ (COD)';
+              ? 'ធនាគារ (Bank Transfer)' 
+              : 'សាច់ប្រាក់ផ្ទាល់ (COD)';
 
           const isPaid = (o.paymentStatus || '').toLowerCase() === 'paid' || o.paymentMethod === 'khqr';
 
@@ -1471,7 +1474,7 @@ export default function AdminDashboardView() {
                       <div>{fullAddress}</div>
                       {o.deliveryNotes && (
                         <div style={{ fontSize: '0.8rem', color: '#ffb74d', marginTop: '4px' }}>
-                          📌 ចំណាំ៖ {o.deliveryNotes}
+                          ចំណាំ៖ {o.deliveryNotes}
                         </div>
                       )}
                     </div>
@@ -1486,9 +1489,11 @@ export default function AdminDashboardView() {
                   </div>
                   <div>
                     {isPaid ? (
-                      <span className="badge badge-success" style={{ fontSize: '0.8rem' }}>✓ បង់រួចរាល់ (PAID)</span>
+                      <span className="badge badge-success" style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Check size={12} /> បង់រួចរាល់ (PAID)
+                      </span>
                     ) : (
-                      <span className="badge badge-hot" style={{ fontSize: '0.8rem' }}>● មិនទាន់បង់ (UNPAID)</span>
+                      <span className="badge badge-hot" style={{ fontSize: '0.8rem' }}>មិនទាន់បង់ (UNPAID)</span>
                     )}
                   </div>
                 </div>
@@ -1617,11 +1622,11 @@ export default function AdminDashboardView() {
                         cursor: 'pointer'
                       }}
                     >
-                      <option value="pending" style={{ background: '#0d1527' }}>⏳ កំពុងរង់ចាំ (Pending)</option>
-                      <option value="processing" style={{ background: '#0d1527' }}>⚙️ កំពុងរៀបចំ (Processing)</option>
-                      <option value="shipped" style={{ background: '#0d1527' }}>🚚 កំពុងដឹកជញ្ជូន (Shipped)</option>
-                      <option value="delivered" style={{ background: '#0d1527' }}>✅ បានប្រគល់ (Delivered)</option>
-                      <option value="cancelled" style={{ background: '#0d1527' }}>❌ បានបោះបង់ (Cancelled)</option>
+                      <option value="pending" style={{ background: '#0d1527' }}>កំពុងរង់ចាំ (Pending)</option>
+                      <option value="processing" style={{ background: '#0d1527' }}>កំពុងរៀបចំ (Processing)</option>
+                      <option value="shipped" style={{ background: '#0d1527' }}>កំពុងដឹកជញ្ជូន (Shipped)</option>
+                      <option value="delivered" style={{ background: '#0d1527' }}>បានប្រគល់ (Delivered)</option>
+                      <option value="cancelled" style={{ background: '#0d1527' }}>បានបោះបង់ (Cancelled)</option>
                     </select>
                   </div>
 

@@ -16,7 +16,7 @@ import { auth, googleProvider, db } from './firebase';
 const LOCAL_STORAGE_USER_KEY = 'stepup_shoes_current_user';
 
 /**
- * ⚡ 1-Click Quick Demo Login for Presentations & Testing
+ * 1-Click Quick Demo Login for Presentations & Testing
  */
 export async function quickDemoLogin(type = 'jinwoo') {
   let sessionUser;

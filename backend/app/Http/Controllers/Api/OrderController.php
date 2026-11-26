@@ -24,10 +24,11 @@ class OrderController extends Controller
 
         $messageText = '';
         if ($eventType === 'NEW_ORDER') {
+            $locationStr = ($order->street_address ? "{$order->street_address}, " : "") . "{$order->district}, {$order->province}";
             $messageText = "🔔 [ការបញ្ជាទិញថ្មី - StepUp Shoes]\n" .
                 "📦 លេខកូដ: #{$order->id}\n" .
                 "👤 អតិថិជន: {$order->customer_name} ({$order->customer_phone})\n" .
-                "📍 ទីតាំង: {$order->district}, {$order->province}\n" .
+                "📍 ទីតាំង: {$locationStr}\n" .
                 "👟 ទំនិញ: {$itemsText}\n" .
                 "💰 សរុប: $" . number_format($order->total_amount, 2) . " [{$order->payment_method}]\n" .
                 "⏰ កាលបរិច្ឆេទ: " . date('Y-m-d H:i:s');

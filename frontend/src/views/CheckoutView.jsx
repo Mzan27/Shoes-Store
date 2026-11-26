@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import * as api from '../services/api';
+import { CAMBODIAN_PROVINCES, CAMBODIA_DISTRICTS, CAMBODIA_SANGKATS, CAMBODIA_BOREYS_CONDOS } from '../data/cambodiaLocations';
 import { 
   CreditCard, 
   Truck, 
@@ -10,7 +11,12 @@ import {
   ShieldCheck, 
   ArrowLeft,
   Building2,
-  DollarSign
+  DollarSign,
+  MapPin,
+  Home,
+  Navigation,
+  Zap,
+  Check
 } from 'lucide-react';
 
 export default function CheckoutView() {
@@ -26,16 +32,23 @@ export default function CheckoutView() {
     setLastPlacedOrder,
     showToast,
     storeSettings,
-    currentUser
+    currentUser,
+    t
   } = useStore();
 
   // Shipping form state with auto-fill from logged-in user
   const [customerName, setCustomerName] = useState(() => currentUser?.displayName || '');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState(() => currentUser?.email || '');
+  
+  // Real Cambodian address fields
   const [province, setProvince] = useState('Phnom Penh');
-  const [district, setDistrict] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
+  const [districtKey, setDistrictKey] = useState('Tuol Kouk');
+  const [district, setDistrict] = useState('ខណ្ឌទួលគោក');
+  const [sangkat, setSangkat] = useState('សង្កាត់បឹងកក់២');
+  const [customSangkat, setCustomSangkat] = useState('');
+  const [houseNo, setHouseNo] = useState('');
+  const [streetNo, setStreetNo] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
   // Sync if currentUser logs in while on checkout
@@ -52,21 +65,76 @@ export default function CheckoutView() {
   const [verifyingKhqr, setVerifyingKhqr] = useState(false);
   const [submittingOrder, setSubmittingOrder] = useState(false);
 
-  const cambodianProvinces = [
-    'Phnom Penh (រាជធានីភ្នំពេញ)',
-    'Siem Reap (ខេត្តសៀមរាប)',
-    'Battambang (ខេត្តបាត់ដំបង)',
-    'Kandal (ខេត្តកណ្តាល)',
-    'Sihanoukville (ខេត្តព្រះសីហនុ)',
-    'Kampong Cham (ខេត្តកំពង់ចាម)',
-    'Kampot (ខេត្តកំពត)',
-    'Takeo (ខេត្តតាកែវ)',
-    'Kampong Chhnang (ខេត្តកំពង់ឆ្នាំង)',
-    'Pursat (ខេត្តពោធិ៍សាត់)',
-    'Banteay Meanchey (ខេត្តបន្ទាយមានជ័យ)',
-    'Svay Rieng (ខេត្តស្វាយរៀង)',
-    'Prey Veng (ខេត្តព្រៃវែង)'
-  ];
+  // Handle province change and auto-set first district and sangkat
+  const handleProvinceChange = (newProvince) => {
+    setProvince(newProvince);
+    const districts = CAMBODIA_DISTRICTS[newProvince] || [];
+    if (districts.length > 0) {
+      const first = districts[0];
+      setDistrictKey(first.en);
+      setDistrict(t(first.km, first.en));
+      const sangkats = CAMBODIA_SANGKATS[first.en] || [];
+      if (sangkats.length > 0) {
+        setSangkat(t(sangkats[0].km, sangkats[0].en));
+      } else {
+        setSangkat('');
+      }
+    } else {
+      setDistrictKey('');
+      setDistrict('');
+      setSangkat('');
+    }
+    setCustomSangkat('');
+  };
+
+  const handleDistrictChange = (selectedEnKey) => {
+    setDistrictKey(selectedEnKey);
+    const districts = CAMBODIA_DISTRICTS[province] || [];
+    const found = districts.find(d => d.en === selectedEnKey);
+    if (found) {
+      setDistrict(t(found.km, found.en));
+      const sangkats = CAMBODIA_SANGKATS[selectedEnKey] || [];
+      if (sangkats.length > 0) {
+        setSangkat(t(sangkats[0].km, sangkats[0].en));
+      } else {
+        setSangkat('');
+      }
+    } else {
+      setDistrict(selectedEnKey);
+      setSangkat('');
+    }
+    setCustomSangkat('');
+  };
+
+  const sangkatsForSelectedDistrict = CAMBODIA_SANGKATS[districtKey] || [];
+  const activeSangkat = sangkat === '__custom__' ? customSangkat : sangkat;
+
+  const formattedHouse = houseNo.trim() 
+    ? (houseNo.startsWith('#') || houseNo.startsWith('ផ្ទះ') || houseNo.toLowerCase().startsWith('house') 
+        ? houseNo.trim() 
+        : `${t('ផ្ទះលេខ', 'House #')} ${houseNo.trim()}`)
+    : '';
+
+  const formattedStreet = streetNo.trim()
+    ? (streetNo.startsWith('ផ្លូវ') || streetNo.toLowerCase().startsWith('st') || streetNo.toLowerCase().startsWith('street')
+        ? streetNo.trim()
+        : `${t('ផ្លូវ', 'St.')} ${streetNo.trim()}`)
+    : '';
+
+  const computedStreetAddress = [
+    formattedHouse,
+    formattedStreet,
+    activeSangkat.trim()
+  ].filter(Boolean).join(', ');
+
+  const currentProvinceObj = CAMBODIAN_PROVINCES.find(p => p.id === province);
+  const currentProvinceLabel = currentProvinceObj ? (lang === 'km' ? currentProvinceObj.km : currentProvinceObj.en) : province;
+
+  const fullDisplayAddress = [
+    computedStreetAddress,
+    district,
+    currentProvinceLabel
+  ].filter(Boolean).join(', ');
 
   // KHR Conversion (1 USD = 4,100 KHR)
   const totalKHR = Math.round(grandTotal * 4100).toLocaleString();
@@ -77,10 +145,10 @@ export default function CheckoutView() {
       const res = await api.verifyKHQR(grandTotal, 'TEMP');
       if (res.success) {
         setKhqrVerified(true);
-        showToast('✅ បានស្កេន KHQR Bakong និងផ្ទៀងផ្ទាត់ជោគជ័យ!');
+        showToast(t('បានស្កេន KHQR Bakong និងផ្ទៀងផ្ទាត់ជោគជ័យ!', 'KHQR Bakong scanned & verified successfully!'));
       }
     } catch (err) {
-      showToast('ការផ្ទៀងផ្ទាត់ KHQR បរាជ័យ', 'error');
+      showToast(t('ការផ្ទៀងផ្ទាត់ KHQR បរាជ័យ', 'KHQR verification failed'), 'error');
     } finally {
       setVerifyingKhqr(false);
     }
@@ -89,13 +157,13 @@ export default function CheckoutView() {
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
-    if (!customerName.trim() || !customerPhone.trim() || !streetAddress.trim()) {
-      showToast('សូមបំពេញព័ត៌មានដឹកជញ្ជូនឱ្យបានគ្រប់គ្រាន់', 'error');
+    if (!customerName.trim() || !customerPhone.trim() || !houseNo.trim() || !streetNo.trim() || !activeSangkat.trim()) {
+      showToast(t('សូមបំពេញឈ្មោះ, លេខទូរស័ព្ទ, ផ្ទះលេខ, ផ្លូវ និងសង្កាត់/ឃុំ', 'Please fill in name, phone, house no, street, and sangkat/commune'), 'error');
       return;
     }
 
     if (cart.length === 0) {
-      showToast('កន្ត្រកទំនិញទទេ', 'error');
+      showToast(t('កន្ត្រកទំនិញទទេ', 'Cart is empty'), 'error');
       navigateTo('shop');
       return;
     }
@@ -106,9 +174,9 @@ export default function CheckoutView() {
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
         customerEmail: customerEmail.trim() || 'customer@example.com',
-        province,
+        province: currentProvinceLabel,
         district: district.trim(),
-        streetAddress: streetAddress.trim(),
+        streetAddress: computedStreetAddress,
         deliveryNotes: deliveryNotes.trim(),
         items: cart.map(item => ({
           productId: item.productId,
@@ -133,7 +201,7 @@ export default function CheckoutView() {
       if (res.success) {
         setLastPlacedOrder(res.data);
         clearCart();
-        showToast('🎉 ការបញ្ជាទិញទទួលបានជោគជ័យ! សារ Telegram ត្រូវបានបញ្ជូន។');
+        showToast(t('ការបញ្ជាទិញទទួលបានជោគជ័យ! សារ Telegram ត្រូវបានបញ្ជូន។', 'Order placed successfully! Telegram alert dispatched.'));
         navigateTo('order-success');
       } else {
         showToast(res.message || 'ការបញ្ជាទិញបរាជ័យ', 'error');
@@ -151,14 +219,14 @@ export default function CheckoutView() {
       <div className="container">
         {/* Back */}
         <button onClick={() => navigateTo('cart')} className="btn btn-secondary btn-sm" style={{ marginBottom: '24px' }}>
-          <ArrowLeft size={16} /> ត្រឡប់ទៅកន្ត្រកវិញ
+          <ArrowLeft size={16} /> {t('ត្រឡប់ទៅកន្ត្រកវិញ', 'Back to Cart')}
         </button>
 
         <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '8px' }}>
-          ការទូទាត់ និងដឹកជញ្ជូន (Checkout)
+          {t('ការទូទាត់ និងដឹកជញ្ជូន', 'Checkout & Delivery')}
         </h1>
         <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', marginBottom: '32px' }}>
-          សូមបំពេញព័ត៌មានដឹកជញ្ជូន និងជ្រើសរើសវិធីសាស្ត្រទូទាត់ប្រាក់ (KHQR ឬ COD)
+          {t('សូមបំពេញព័ត៌មានដឹកជញ្ជូន និងជ្រើសរើសវិធីសាស្ត្រទូទាត់ប្រាក់', 'Please provide shipping details and choose your preferred payment method')}
         </p>
 
         <form onSubmit={handlePlaceOrder}>
@@ -174,16 +242,16 @@ export default function CheckoutView() {
               <div className="glass-panel" style={{ padding: '26px', borderRadius: 'var(--radius-lg)' }}>
                 <h3 style={{ fontSize: '1.2rem', marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Truck size={20} color="var(--accent-primary)" />
-                  <span>១. អាសយដ្ឋានដឹកជញ្ជូន (Shipping Address)</span>
+                  <span>{t('១. អាសយដ្ឋានដឹកជញ្ជូន', '1. Shipping Address')}</span>
                 </h3>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div className="form-group">
-                    <label className="form-label">ឈ្មោះអ្នកទទួល *</label>
+                    <label className="form-label">{t('ឈ្មោះអ្នកទទួល *', 'Recipient Name *')}</label>
                     <input 
                       type="text"
                       required
-                      placeholder="ឧ. Sokha Heng"
+                      placeholder={t('ឧ. Sokha Heng', 'e.g. Sokha Heng')}
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       className="form-input"
@@ -191,7 +259,7 @@ export default function CheckoutView() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">លេខទូរស័ព្ទ (Contact Phone) *</label>
+                    <label className="form-label">{t('លេខទូរស័ព្ទ *', 'Phone Number *')}</label>
                     <input 
                       type="tel"
                       required
@@ -204,59 +272,151 @@ export default function CheckoutView() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">អ៊ីមែល (Email សម្រាប់វិក្កយបត្រ)</label>
+                  <label className="form-label">{t('អ៊ីមែល', 'Email Address')}</label>
                   <input 
                     type="email"
-                    placeholder="ឧ. customer@gmail.com"
+                    placeholder="customer@gmail.com"
                     value={customerEmail}
                     onChange={(e) => setCustomerEmail(e.target.value)}
                     className="form-input"
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
                   <div className="form-group">
-                    <label className="form-label">ខេត្ត / រាជធានី (Province) *</label>
+                    <label className="form-label">{t('ខេត្ត / រាជធានី *', 'Province / City *')}</label>
                     <select 
                       value={province} 
-                      onChange={(e) => setProvince(e.target.value)}
+                      onChange={(e) => handleProvinceChange(e.target.value)}
                       className="form-select"
+                      required
                     >
-                      {cambodianProvinces.map(p => (
-                        <option key={p} value={p.split(' ')[0]}>{p}</option>
+                      {CAMBODIAN_PROVINCES.map(p => (
+                        <option key={p.id} value={p.id}>{lang === 'km' ? p.km : p.en}</option>
                       ))}
                     </select>
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">ខណ្ឌ / ស្រុក (District / Khan)</label>
+                    <label className="form-label">{t('ខណ្ឌ / ស្រុក *', 'District / Khan *')}</label>
+                    <select 
+                      value={districtKey}
+                      onChange={(e) => handleDistrictChange(e.target.value)}
+                      className="form-select"
+                      required
+                    >
+                      <option value="">{t('-- ជ្រើសរើសខណ្ឌ/ស្រុក --', '-- Select District/Khan --')}</option>
+                      {(CAMBODIA_DISTRICTS[province] || []).map(d => (
+                        <option key={d.en} value={d.en}>
+                          {lang === 'km' ? d.km : d.en}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Sangkat / Commune */}
+                <div className="form-group">
+                  <label className="form-label">{t('សង្កាត់ / ឃុំ *', 'Sangkat / Commune *')}</label>
+                  {sangkatsForSelectedDistrict.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <select
+                        value={sangkat}
+                        onChange={(e) => setSangkat(e.target.value)}
+                        className="form-select"
+                        required={sangkat !== '__custom__'}
+                      >
+                        <option value="">{t('-- ជ្រើសរើសសង្កាត់ --', '-- Select Sangkat --')}</option>
+                        {sangkatsForSelectedDistrict.map(s => (
+                          <option key={s.en} value={lang === 'km' ? s.km : s.en}>
+                            {lang === 'km' ? s.km : s.en}
+                          </option>
+                        ))}
+                        <option value="__custom__">{t('ផ្សេងៗ (វាយបញ្ចូលផ្ទាល់)...', 'Other (Type manually)...')}</option>
+                      </select>
+                      {sangkat === '__custom__' && (
+                        <input
+                          type="text"
+                          required
+                          placeholder={t('វាយឈ្មោះសង្កាត់ ឬឃុំនៅទីនេះ...', 'Type Sangkat or Commune here...')}
+                          value={customSangkat}
+                          onChange={(e) => setCustomSangkat(e.target.value)}
+                          className="form-input"
+                          autoFocus
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      required
+                      placeholder={t('ឧ. ឃុំ ឬ សង្កាត់...', 'e.g. Commune or Sangkat...')}
+                      value={sangkat === '__custom__' ? customSangkat : sangkat}
+                      onChange={(e) => {
+                        setSangkat(e.target.value);
+                        setCustomSangkat(e.target.value);
+                      }}
+                      className="form-input"
+                    />
+                  )}
+                </div>
+
+                {/* House No and Street */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+                  <div className="form-group">
+                    <label className="form-label">{t('ផ្ទះលេខ *', 'House No. *')}</label>
                     <input 
                       type="text"
-                      placeholder="ឧ. Tuol Kouk"
-                      value={district}
-                      onChange={(e) => setDistrict(e.target.value)}
+                      required
+                      placeholder={t('ឧ. ១៤A ឬ #14A', 'e.g. #14A or Building 2')}
+                      value={houseNo}
+                      onChange={(e) => setHouseNo(e.target.value)}
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">{t('ផ្លូវ / មហាវិថី *', 'Street / Boulevard *')}</label>
+                    <input 
+                      type="text"
+                      required
+                      placeholder={t('ឧ. ២៨៩ ឬ ផ្លូវជាតិលេខ១', 'e.g. 289 or St. 2004')}
+                      value={streetNo}
+                      onChange={(e) => setStreetNo(e.target.value)}
                       className="form-input"
                     />
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">ផ្ទះលេខ និងផ្លូវ (Street Address) *</label>
-                  <input 
-                    type="text"
-                    required
-                    placeholder="ឧ. ផ្ទះលេខ 14, ផ្លូវ 289, សង្កាត់បឹងកក់២"
-                    value={streetAddress}
-                    onChange={(e) => setStreetAddress(e.target.value)}
-                    className="form-input"
-                  />
-                </div>
+                {/* Live Full Address Preview */}
+                {fullDisplayAddress && (
+                  <div style={{
+                    background: 'rgba(255, 107, 43, 0.08)',
+                    border: '1px solid rgba(255, 107, 43, 0.25)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '12px 16px',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px'
+                  }}>
+                    <MapPin size={18} color="var(--accent-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ fontSize: '0.85rem' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--accent-primary)', marginBottom: '2px' }}>
+                        {t('អាសយដ្ឋានដឹកជញ្ជូនពេញលេញ៖', 'Full Delivery Address:')}
+                      </div>
+                      <div style={{ color: 'var(--text-primary)', wordBreak: 'break-word', lineHeight: 1.4 }}>
+                        {fullDisplayAddress}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">ចំណាំសម្រាប់ការដឹកជញ្ជូន (Delivery Notes)</label>
+                  <label className="form-label">{t('ចំណាំសម្រាប់ការដឹកជញ្ជូន', 'Delivery Notes')}</label>
                   <textarea 
                     rows="2"
-                    placeholder="ឧ. សូមទូរស័ព្ទមុនពេលមកដល់ ឬដាក់នៅមុខផ្ទះ..."
+                    placeholder={t('ឧ. សូមទូរស័ព្ទមុនពេលមកដល់ ឬដាក់នៅមុខផ្ទះ...', 'e.g. Please call before arrival or leave at doorstep...')}
                     value={deliveryNotes}
                     onChange={(e) => setDeliveryNotes(e.target.value)}
                     className="form-textarea"
@@ -268,7 +428,7 @@ export default function CheckoutView() {
               <div className="glass-panel" style={{ padding: '26px', borderRadius: 'var(--radius-lg)' }}>
                 <h3 style={{ fontSize: '1.2rem', marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CreditCard size={20} color="var(--accent-primary)" />
-                  <span>២. វិធីសាស្ត្រទូទាត់ប្រាក់ (Payment Method)</span>
+                  <span>{t('២. វិធីសាស្ត្រទូទាត់ប្រាក់', '2. Payment Method')}</span>
                 </h3>
 
                 {/* Tabs */}
@@ -308,7 +468,7 @@ export default function CheckoutView() {
                     }}
                   >
                     <Truck size={22} style={{ margin: '0 auto 6px' }} />
-                    <div>ទូទាត់ពេលទទួល (COD)</div>
+                    <div>{t('ទូទាត់ពេលទទួល', 'Cash on Delivery')}</div>
                   </button>
 
                   <button
@@ -327,6 +487,7 @@ export default function CheckoutView() {
                     }}
                   >
                     <Building2 size={22} style={{ margin: '0 auto 6px' }} />
+                    <div>{t('ផ្ទេរតាមធនាគារ', 'Bank Transfer')}</div>
                     <div>ABA / ACLEDA</div>
                   </button>
                 </div>
@@ -334,22 +495,23 @@ export default function CheckoutView() {
                 {/* KHQR Card Display */}
                 {paymentMethod === 'KHQR' && (
                   <div style={{
-                    background: 'linear-gradient(135deg, #e11d48, #be123c)',
+                    background: 'linear-gradient(135deg, #002d56, #00427a)',
                     borderRadius: 'var(--radius-md)',
                     padding: '24px',
                     color: '#fff',
                     boxShadow: 'var(--shadow-md)',
                     position: 'relative',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    border: '1px solid rgba(0, 163, 224, 0.3)'
                   }}>
                     {/* Header */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontSize: '1.4rem' }}>🇰🇭</span>
-                        <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '1px' }}>KHQR • BAKONG</span>
+                        <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '1px' }}>ABA' KHQR • BAKONG</span>
                       </div>
-                      <span className="badge" style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}>
-                        SHOES STORE
+                      <span className="badge" style={{ background: 'rgba(0, 163, 224, 0.3)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)' }}>
+                        {t('ស្កេនទូទាត់ភ្លាមៗ', 'Scan to Pay')}
                       </span>
                     </div>
 
@@ -364,45 +526,35 @@ export default function CheckoutView() {
                       padding: '20px',
                       color: '#0f172a'
                     }}>
-                      {/* Real or Simulated KHQR Visual */}
+                      {/* Real ABA KHQR Visual */}
                       <div style={{
-                        width: '160px',
-                        height: '160px',
+                        maxWidth: '220px',
+                        width: '100%',
                         background: '#fff',
-                        border: '3px solid #be123c',
+                        border: '2px solid #00427a',
                         borderRadius: '12px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                         overflow: 'hidden',
-                        padding: storeSettings?.khqrImage ? '4px' : '0'
+                        boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
+                        textAlign: 'center'
                       }}>
-                        {storeSettings?.khqrImage ? (
-                          <img 
-                            src={storeSettings.khqrImage} 
-                            alt="KHQR Code" 
-                            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} 
-                          />
-                        ) : (
-                          <>
-                            <QrCode size={110} color="#be123c" />
-                            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#be123c', marginTop: '4px' }}>
-                              KHQR SCAN TO PAY
-                            </span>
-                          </>
-                        )}
+                        <img 
+                          src={storeSettings?.khqrImage || '/aba-khqr.jpg'} 
+                          alt="ABA KHQR Code" 
+                          style={{ width: '100%', height: 'auto', display: 'block' }} 
+                        />
                       </div>
 
                       <div style={{ flex: 1, minWidth: '180px' }}>
-                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>ម្ចាស់គណនី (Receiver):</div>
-                        <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-                          {storeSettings?.khqrReceiverName || storeSettings?.storeName || 'SHOES STORE STEPUP'}
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{t('ម្ចាស់គណនី:', 'Receiver Name:')}</div>
+                        <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#002d56', marginBottom: '6px' }}>
+                          {storeSettings?.khqrReceiverName || 'NET NAI'}
                         </div>
 
-                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>ចំនួនទឹកប្រាក់ (Amount):</div>
-                        <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#be123c' }}>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '2px' }}>{t('គណនី ABA (USD):', 'ABA Account (USD):')} <strong>012 402 485</strong></div>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '10px' }}>{t('គណនី ABA (KHR):', 'ABA Account (KHR):')} <strong>012 402 486</strong></div>
+
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{t('ចំនួនទឹកប្រាក់:', 'Total Amount:')}</div>
+                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#00427a' }}>
                           ${grandTotal.toFixed(2)}
                         </div>
                         <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '14px' }}>
@@ -415,19 +567,30 @@ export default function CheckoutView() {
                           disabled={verifyingKhqr || khqrVerified}
                           className="btn btn-sm"
                           style={{
-                            background: khqrVerified ? '#10b981' : '#be123c',
+                            background: khqrVerified ? '#10b981' : 'linear-gradient(135deg, #00427a, #002d56)',
                             color: '#fff',
                             width: '100%',
-                            fontSize: '0.82rem'
+                            fontSize: '0.82rem',
+                            padding: '10px 14px'
                           }}
                         >
-                          {verifyingKhqr ? 'កំពុងផ្ទៀងផ្ទាត់...' : khqrVerified ? '✓ បានផ្ទៀងផ្ទាត់រួចរាល់' : '⚡ ស្កេន និងផ្ទៀងផ្ទាត់ KHQR ឥឡូវនេះ'}
+                          {verifyingKhqr ? (
+                            <span>{t('កំពុងផ្ទៀងផ្ទាត់...', 'Verifying...')}</span>
+                          ) : khqrVerified ? (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                              <Check size={14} /> {t('បានផ្ទៀងផ្ទាត់រួចរាល់', 'Verified Successfully')}
+                            </span>
+                          ) : (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                              <Zap size={14} /> {t('ស្កេនរួចចុចទីនេះដើម្បីផ្ទៀងផ្ទាត់', 'Scanned? Click to Verify')}
+                            </span>
+                          )}
                         </button>
                       </div>
                     </div>
 
                     <div style={{ marginTop: '14px', fontSize: '0.78rem', textAlign: 'center', opacity: 0.9 }}>
-                      គាំទ្រគ្រប់កម្មវិធីធនាគារនៅកម្ពុជា៖ ABA, ACLEDA, Wing, Canadia, Sathapana, TrueMoney
+                      {t('គាំទ្រគ្រប់កម្មវិធីធនាគារនៅកម្ពុជា៖ ABA Mobile, Bakong, ACLEDA, Wing, Canadia, Sathapana', 'Supported by all Cambodian banking apps: ABA Mobile, Bakong, ACLEDA, Wing, Canadia, Sathapana')}
                     </div>
                   </div>
                 )}
@@ -443,10 +606,13 @@ export default function CheckoutView() {
                   }}>
                     <h4 style={{ fontSize: '1rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <CheckCircle2 size={18} />
-                      <span>ទូទាត់ប្រាក់នៅពេលទទួលបានស្បែកជើង (Cash On Delivery)</span>
+                      <span>{t('ទូទាត់ប្រាក់នៅពេលទទួលបានស្បែកជើង', 'Cash On Delivery')}</span>
                     </h4>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                      អ្នកដឹកជញ្ជូននឹងប្រគល់កញ្ចប់ស្បែកជើងជូនអ្នកដល់ផ្ទះ។ អ្នកអាចពិនិត្យទំនិញ និងទំហំ Size រួចទូទាត់សាច់ប្រាក់ចំនួន <strong>${grandTotal.toFixed(2)}</strong> (ឬ {totalKHR} KHR)។
+                      {t(
+                        `អ្នកដឹកជញ្ជូននឹងប្រគល់កញ្ចប់ស្បែកជើងជូនអ្នកដល់ផ្ទះ។ អ្នកអាចពិនិត្យទំនិញ និងទំហំ Size រួចទូទាត់សាច់ប្រាក់ចំនួន $${grandTotal.toFixed(2)} (ឬ ${totalKHR} KHR)។`,
+                        `The courier will deliver your shoes to your doorstep. You can inspect the shoes and size, then pay $${grandTotal.toFixed(2)} (or ${totalKHR} KHR) in cash.`
+                      )}
                     </p>
                   </div>
                 )}
@@ -459,11 +625,11 @@ export default function CheckoutView() {
                     background: 'rgba(0, 210, 255, 0.08)',
                     border: '1px solid rgba(0, 210, 255, 0.3)'
                   }}>
-                    <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>ព័ត៌មានផ្ទេរប្រាក់ផ្ទាល់៖</h4>
+                    <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>{t('ព័ត៌មានផ្ទេរប្រាក់ផ្ទាល់៖', 'Direct Bank Transfer Details:')}</h4>
                     <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-                      <div>• <strong>ABA Bank:</strong> {storeSettings?.abaAccount || '000 892 123 (STEPUP SHOES CO.)'}</div>
-                      <div>• <strong>ACLEDA:</strong> {storeSettings?.acledaAccount || '1234-5678-9012 (STEPUP SHOES CO.)'}</div>
-                      <div>• <strong>Wing:</strong> {storeSettings?.wingAccount || storeSettings?.phone || '012 345 678 (STEPUP SHOES)'}</div>
+                      <div>• <strong>ABA Bank:</strong> 012 402 485 (USD) / 012 402 486 (KHR) - NET NAI</div>
+                      <div>• <strong>ACLEDA:</strong> {storeSettings?.acledaAccount || '1234-5678-9012 (NET NAI)'}</div>
+                      <div>• <strong>Wing:</strong> {storeSettings?.wingAccount || '012 345 678 (NET NAI)'}</div>
                     </div>
                   </div>
                 )}
@@ -472,7 +638,7 @@ export default function CheckoutView() {
 
             {/* Right: Order Summary Confirmation */}
             <div className="glass-panel" style={{ padding: '28px', borderRadius: 'var(--radius-lg)', position: 'sticky', top: '90px' }}>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '18px' }}>សង្ខេបទំនិញកុម្ម៉ង់ ({cart.length})</h3>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '18px' }}>{t('សង្ខេបទំនិញកុម្ម៉ង់', 'Order Summary')} ({cart.length})</h3>
 
               {/* Items List Preview */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '280px', overflowY: 'auto', marginBottom: '20px' }}>
@@ -481,10 +647,10 @@ export default function CheckoutView() {
                     <img src={item.image} alt={item.name} style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: '0.88rem', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {item.name}
+                        {lang === 'km' && item.khmerName ? item.khmerName : item.name}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        Size: EU {item.size} • x{item.quantity}
+                        {t(`ទំហំ៖ ${item.size}`, `Size: ${item.size}`)} • x{item.quantity}
                       </div>
                     </div>
                     <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>
@@ -497,25 +663,25 @@ export default function CheckoutView() {
               {/* Price Calculations */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', borderTop: '1px solid var(--border-light)', paddingTop: '16px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-                  <span>តម្លៃសរុប (Subtotal):</span>
+                  <span>{t('តម្លៃសរុប:', 'Subtotal:')}</span>
                   <span>${cartSubtotal.toFixed(2)}</span>
                 </div>
                 {discountAmount > 0 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: '#10b981', fontWeight: 600 }}>
-                    <span>បញ្ចុះតម្លៃ ({appliedCoupon?.code}):</span>
+                    <span>{t('បញ្ចុះតម្លៃ', 'Discount')} ({appliedCoupon?.code}):</span>
                     <span>-${discountAmount.toFixed(2)}</span>
                   </div>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-                  <span>សេវាដឹកជញ្ជូន ({province}):</span>
-                  <span>{shippingFee === 0 ? <strong style={{ color: '#10b981' }}>ឥតគិតថ្លៃ</strong> : `$${shippingFee.toFixed(2)}`}</span>
+                  <span>{t('សេវាដឹកជញ្ជូន:', 'Delivery:')}</span>
+                  <span>{shippingFee === 0 ? <strong style={{ color: '#10b981' }}>{t('ឥតគិតថ្លៃ', 'Free')}</strong> : `$${shippingFee.toFixed(2)}`}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 800, borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
-                  <span>សរុប (Total USD):</span>
+                  <span>{t('សរុប:', 'Total:')}</span>
                   <span className="gradient-text">${grandTotal.toFixed(2)}</span>
                 </div>
                 <div style={{ textAlign: 'right', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  ≈ {totalKHR} KHR
+                  ≈ {totalKHR} {t('រៀល', 'KHR')}
                 </div>
               </div>
 
@@ -527,11 +693,14 @@ export default function CheckoutView() {
                 style={{ width: '100%', marginBottom: '14px' }}
               >
                 <Send size={18} />
-                <span>{submittingOrder ? 'កំពុងបញ្ជូនការបញ្ជាទិញ...' : 'បញ្ជាក់ការបញ្ជាទិញ (Place Order)'}</span>
+                <span>{submittingOrder ? t('កំពុងបញ្ជូនការបញ្ជាទិញ...', 'Submitting Order...') : t('បញ្ជាក់ការបញ្ជាទិញ', 'Place Order')}</span>
               </button>
 
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
-                ដោយចុចបញ្ជាក់ការបញ្ជាទិញ អ្នកយល់ព្រមតាមគោលការណ៍ហាង StepUp Shoes និងការជូនដំណឹងតាម Telegram។
+                {t(
+                  'ដោយចុចបញ្ជាក់ការបញ្ជាទិញ អ្នកយល់ព្រមតាមគោលការណ៍ហាង StepUp Shoes និងការជូនដំណឹងតាម Telegram។',
+                  'By placing your order, you agree to StepUp Shoes store policies and Telegram order notifications.'
+                )}
               </div>
             </div>
           </div>

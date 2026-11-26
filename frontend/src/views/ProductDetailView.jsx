@@ -23,7 +23,9 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
     addToCart, 
     toggleWishlist, 
     isProductInWishlist,
-    showToast
+    showToast,
+    lang,
+    t
   } = useStore();
 
   const [product, setProduct] = useState(null);
@@ -63,8 +65,8 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
   if (loading || !product) {
     return (
       <div className="container" style={{ padding: '80px 20px', textAlign: 'center' }}>
-        <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>👟</div>
-        <h3>កំពុងផ្ទុកព័ត៌មានលម្អិតនៃស្បែកជើង...</h3>
+        <ShoppingBag size={48} color="var(--accent-primary)" style={{ marginBottom: '16px', opacity: 0.85 }} />
+        <h3>{t('កំពុងផ្ទុកព័ត៌មានលម្អិតនៃស្បែកជើង...', 'Loading shoe details...')}</h3>
       </div>
     );
   }
@@ -97,7 +99,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
       });
 
       if (res.success) {
-        showToast('🌟 អរគុណសម្រាប់ការវាយតម្លៃ!');
+        showToast('អរគុណសម្រាប់ការវាយតម្លៃ!');
         setProduct(prev => ({
           ...prev,
           reviews: [res.data, ...(prev.reviews || [])]
@@ -121,7 +123,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
           className="btn btn-secondary btn-sm"
           style={{ marginBottom: '24px' }}
         >
-          <ArrowLeft size={16} /> ត្រឡប់ទៅកាតាឡុកវិញ
+          <ArrowLeft size={16} /> {t('ត្រឡប់ទៅកាតាឡុកវិញ', 'Back to Catalog')}
         </button>
 
         {/* Top Product View: Gallery + Info */}
@@ -149,7 +151,8 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
                 style={{
                   width: '100%',
                   height: '420px',
-                  objectFit: 'cover',
+                  objectFit: (product.images && product.images[activeImageIndex] && product.images[activeImageIndex].endsWith('.png')) ? 'contain' : 'cover',
+                  padding: (product.images && product.images[activeImageIndex] && product.images[activeImageIndex].endsWith('.png')) ? '24px' : '0',
                   display: 'block'
                 }}
               />
@@ -187,15 +190,15 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f59e0b', fontSize: '0.9rem', fontWeight: 600 }}>
                 <Star size={16} fill="#f59e0b" color="#f59e0b" />
                 <span>{product.rating}</span>
-                <span style={{ color: 'var(--text-muted)' }}>({product.reviewCount} ការវាយតម្លៃ)</span>
+                <span style={{ color: 'var(--text-muted)' }}>({product.reviewCount} {t('ការវាយតម្លៃ', 'reviews')})</span>
               </div>
             </div>
 
             <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '6px' }}>
-              {product.name}
+              {lang === 'km' && product.khmerName ? product.khmerName : product.name}
             </h1>
             <h2 style={{ fontSize: '1.1rem', color: 'var(--accent-primary)', fontWeight: 600, marginBottom: '18px' }}>
-              {product.khmerName}
+              {lang === 'km' ? `ម៉ាក ${product.brand} • ${product.category}` : (product.category ? product.category.toUpperCase() : product.brand)}
             </h2>
 
             {/* Price Row */}
@@ -218,14 +221,14 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
                 </span>
               )}
               <span style={{ marginLeft: 'auto', fontSize: '0.85rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <CheckCircle2 size={16} /> ស្តុកមាន: <strong>{product.stock} គូ</strong>
+                <CheckCircle2 size={16} /> {t(`ស្តុកមាន៖ ${product.stock} គូ`, `In Stock: ${product.stock} pairs`)}
               </span>
             </div>
 
             {/* Color Swatch */}
             {product.colors && product.colors.length > 0 && (
               <div style={{ marginBottom: '20px' }}>
-                <label className="form-label">ជម្រើសពណ៌ (Color): <strong>{selectedColor}</strong></label>
+                <label className="form-label">{t('ជម្រើសពណ៌៖', 'Color:')} <strong>{selectedColor}</strong></label>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   {product.colors.map(col => (
                     <button
@@ -253,7 +256,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
             <div style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <label className="form-label" style={{ margin: 0 }}>
-                  ទំហំស្បែកជើង (EU Size): <strong>{selectedSize}</strong>
+                  {t('ទំហំស្បែកជើង៖', 'Select Size:')} <strong>{selectedSize}</strong>
                 </label>
                 <button
                   onClick={onOpenSizeGuide}
@@ -269,7 +272,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
                     textDecoration: 'underline'
                   }}
                 >
-                  <Ruler size={14} /> តារាងវាស់ទំហំជើង (Size Guide)
+                  <Ruler size={14} /> {t('តារាងវាស់ទំហំជើង', 'Size Guide')}
                 </button>
               </div>
 
@@ -345,7 +348,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
                 style={{ flex: 1, minWidth: '160px' }}
               >
                 <ShoppingBag size={18} />
-                <span>ដាក់ចូលកន្ត្រក</span>
+                <span>{t('ដាក់ចូលកន្ត្រក', 'Add to Cart')}</span>
               </button>
 
               <button
@@ -353,14 +356,14 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
                 className="btn btn-primary btn-lg"
                 style={{ flex: 1, minWidth: '160px' }}
               >
-                <span>ទិញឥឡូវនេះ (Buy Now)</span>
+                <span>{t('ទិញឥឡូវនេះ', 'Buy Now')}</span>
               </button>
 
               <button
                 onClick={() => toggleWishlist(product)}
                 className="btn btn-secondary btn-icon"
                 style={{ width: '50px', height: '50px' }}
-                title={isFavorite ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                title={isFavorite ? t('ដកចេញពីបញ្ជីចូលចិត្ត', 'Remove from Wishlist') : t('រក្សាទុកក្នុងបញ្ជីចូលចិត្ត', 'Add to Wishlist')}
               >
                 <Heart size={22} fill={isFavorite ? '#ff5e36' : 'none'} color={isFavorite ? '#ff5e36' : 'currentColor'} />
               </button>
@@ -380,15 +383,15 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <RefreshCw size={16} color="var(--accent-primary)" />
-                <span>ប្តូរទំហំ Size ឥតគិតថ្លៃ ៧ ថ្ងៃ</span>
+                <span>{t('ប្តូរទំហំឥតគិតថ្លៃ ៧ ថ្ងៃ', 'Free 7-Day Size Exchange')}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Truck size={16} color="#00d2ff" />
-                <span>ដឹកជញ្ជូនរហ័ស ២៥ ខេត្តក្រុង</span>
+                <span>{t('ដឹកជញ្ជូនរហ័ស ២៥ ខេត្តក្រុង', 'Fast Delivery 25 Provinces')}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ShieldCheck size={16} color="#10b981" />
-                <span>KHQR & បង់ប្រាក់ពេលទទួល</span>
+                <span>{t('ទូទាត់ KHQR និងបង់ប្រាក់ពេលទទួល', 'KHQR & Cash on Delivery')}</span>
               </div>
             </div>
           </div>
@@ -396,12 +399,12 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
 
         {/* Description & Specifications */}
         <div className="glass-panel" style={{ padding: '30px', borderRadius: 'var(--radius-lg)', marginBottom: '50px' }}>
-          <h3 style={{ fontSize: '1.25rem', marginBottom: '14px' }}>ការពិពណ៌នាផលិតផល (Product Details)</h3>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '14px' }}>{t('ការពិពណ៌នាផលិតផល', 'Product Description')}</h3>
           <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '24px' }}>
             {product.description}
           </p>
 
-          <h4 style={{ fontSize: '1.05rem', marginBottom: '12px' }}>លក្ខណៈពិសេស (Specifications)</h4>
+          <h4 style={{ fontSize: '1.05rem', marginBottom: '12px' }}>{t('លក្ខណៈពិសេស', 'Specifications')}</h4>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -409,19 +412,19 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
             fontSize: '0.88rem'
           }}>
             <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block' }}>ម៉ាក / Brand:</span>
+              <span style={{ color: 'var(--text-muted)', display: 'block' }}>{t('ម៉ាកយីហោ៖', 'Brand:')}</span>
               <strong>{product.brand}</strong>
             </div>
             <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block' }}>សារធាតុផ្សំ (Material):</span>
+              <span style={{ color: 'var(--text-muted)', display: 'block' }}>{t('សារធាតុផ្សំ៖', 'Material:')}</span>
               <strong>{product.material}</strong>
             </div>
             <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block' }}>ភេទ (Gender):</span>
+              <span style={{ color: 'var(--text-muted)', display: 'block' }}>{t('សម្រាប់ភេទ៖', 'Gender:')}</span>
               <strong>{product.gender}</strong>
             </div>
             <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-              <span style={{ color: 'var(--text-muted)', display: 'block' }}>ប្រភេទ (Category):</span>
+              <span style={{ color: 'var(--text-muted)', display: 'block' }}>{t('ប្រភេទ៖', 'Category:')}</span>
               <strong style={{ textTransform: 'capitalize' }}>{product.category}</strong>
             </div>
           </div>
@@ -430,7 +433,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
         {/* Customer Reviews & Submit Review Form */}
         <div className="glass-panel" style={{ padding: '30px', borderRadius: 'var(--radius-lg)', marginBottom: '50px' }}>
           <h3 style={{ fontSize: '1.25rem', marginBottom: '20px' }}>
-            ការវាយតម្លៃពីអតិថិជន (Customer Reviews & Ratings)
+            {t('ការវាយតម្លៃពីអតិថិជន', 'Customer Reviews & Ratings')}
           </h3>
 
           <div style={{
@@ -472,7 +475,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
                 </div>
               ) : (
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                  មិនទាន់មានការវាយតម្លៃនៅឡើយទេ។ សូមក្លាយជាអ្នកដំបូងគេដែលផ្តល់មតិយោបល់!
+                  {t('មិនទាន់មានការវាយតម្លៃនៅឡើយទេ។ សូមក្លាយជាអ្នកដំបូងគេដែលផ្តល់មតិយោបល់!', 'No reviews yet. Be the first to share your feedback!')}
                 </div>
               )}
             </div>
@@ -484,13 +487,13 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-light)'
             }}>
-              <h4 style={{ fontSize: '1.05rem', marginBottom: '14px' }}>ផ្តល់ការវាយតម្លៃរបស់អ្នក</h4>
+              <h4 style={{ fontSize: '1.05rem', marginBottom: '14px' }}>{t('ផ្តល់ការវាយតម្លៃរបស់អ្នក', 'Leave a Review')}</h4>
               
               <div className="form-group">
-                <label className="form-label">ឈ្មោះរបស់អ្នក</label>
+                <label className="form-label">{t('ឈ្មោះរបស់អ្នក', 'Your Name')}</label>
                 <input 
                   type="text"
-                  placeholder="ឧ. Sokha Meng"
+                  placeholder={t('ឧ. Sokha Meng', 'e.g. John Doe')}
                   value={reviewName}
                   onChange={(e) => setReviewName(e.target.value)}
                   className="form-input"
@@ -498,7 +501,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label">ពិន្ទុផ្កាយ (Rating)</label>
+                <label className="form-label">{t('ពិន្ទុផ្កាយ', 'Rating')}</label>
                 <div style={{ display: 'flex', gap: '8px', cursor: 'pointer' }}>
                   {[1, 2, 3, 4, 5].map(star => (
                     <button
@@ -518,10 +521,10 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
               </div>
 
               <div className="form-group">
-                <label className="form-label">មតិយោបល់</label>
+                <label className="form-label">{t('មតិយោបល់', 'Comment')}</label>
                 <textarea 
                   rows="3"
-                  placeholder="សរសេរពីគុណភាពស្បែកជើង ផាសុកភាព ឬសេវាកម្ម..."
+                  placeholder={t('សរសេរពីគុណភាពស្បែកជើង ផាសុកភាព ឬសេវាកម្ម...', 'Write your review about shoe quality, comfort, fit...')}
                   value={reviewComment}
                   onChange={(e) => setReviewComment(e.target.value)}
                   className="form-textarea"
@@ -530,7 +533,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
 
               <button type="submit" disabled={submittingReview} className="btn btn-primary btn-sm">
                 <Send size={14} />
-                <span>{submittingReview ? 'កំពុងបញ្ជូន...' : 'បញ្ជូនការវាយតម្លៃ'}</span>
+                <span>{submittingReview ? t('កំពុងបញ្ជូន...', 'Submitting...') : t('បញ្ជូនការវាយតម្លៃ', 'Submit Review')}</span>
               </button>
             </form>
           </div>
@@ -540,7 +543,7 @@ export default function ProductDetailView({ onOpenSizeGuide }) {
         {product.related && product.related.length > 0 && (
           <div>
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '24px' }}>
-              ស្បែកជើងដែលប្រហាក់ប្រហែល (Related Shoes)
+              {t('ស្បែកជើងដែលប្រហាក់ប្រហែល', 'Related Shoes')}
             </h3>
             <div className="grid-products">
               {product.related.map(rel => (

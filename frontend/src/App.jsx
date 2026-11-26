@@ -59,7 +59,7 @@ function StoreApp() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={(user, type) => {
-          showToast(`🎉 ស្វាគមន៍ ${user.displayName || user.email}!`);
+          showToast(`ស្វាគមន៍ ${user.displayName || user.email}!`);
         }}
       />
 
@@ -88,10 +88,73 @@ function StoreApp() {
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('App ErrorBoundary caught:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+          color: '#ffffff',
+          textAlign: 'center',
+          background: '#0b0f19',
+          fontFamily: 'system-ui, sans-serif'
+        }}>
+          <h2 style={{ fontSize: '1.4rem', marginBottom: '12px', color: '#ff5e36' }}>មានបញ្ហាក្នុងការបង្ហាញទំព័រ (Rendering Error)</h2>
+          <pre style={{
+            background: 'rgba(255,255,255,0.06)',
+            padding: '16px',
+            borderRadius: '12px',
+            maxWidth: '750px',
+            overflowX: 'auto',
+            textAlign: 'left',
+            color: '#ef4444',
+            fontSize: '0.85rem'
+          }}>
+            {this.state.error?.toString()}
+          </pre>
+          <button 
+            onClick={() => { localStorage.clear(); window.location.reload(); }}
+            style={{
+              marginTop: '20px',
+              padding: '10px 24px',
+              borderRadius: '24px',
+              background: '#ff5e36',
+              border: 'none',
+              color: '#ffffff',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+          >
+            សម្អាត Cache និង Refresh
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
-    <StoreProvider>
-      <StoreApp />
-    </StoreProvider>
+    <ErrorBoundary>
+      <StoreProvider>
+        <StoreApp />
+      </StoreProvider>
+    </ErrorBoundary>
   );
 }

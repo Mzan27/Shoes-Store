@@ -8,7 +8,15 @@ import {
   SlidersHorizontal,
   RotateCcw,
   Sparkles,
-  ChevronDown
+  ChevronDown,
+  ShoppingBag,
+  Footprints,
+  Briefcase,
+  Compass,
+  Sun,
+  Flame,
+  Grid,
+  X
 } from 'lucide-react';
 
 export default function ShopView({ onOpenSizeGuide }) {
@@ -109,25 +117,28 @@ export default function ShopView({ onOpenSizeGuide }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '1.05rem' }}>
                 <Filter size={18} color="var(--accent-primary)" />
-                <span>តម្រងស្វែងរក (Filters)</span>
+                <span>{t('តម្រងស្វែងរក', 'Filters')}</span>
               </div>
               {hasActiveFilters && (
                 <button
                   onClick={handleResetFilters}
                   style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontSize: '0.78rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                 >
-                  <RotateCcw size={12} /> សម្អាត
+                  <RotateCcw size={12} /> {t('សម្អាត', 'Reset')}
                 </button>
               )}
             </div>
 
             {/* Category Selector */}
             <div style={{ marginBottom: '22px' }}>
-              <label className="form-label" style={{ fontWeight: 700 }}>ប្រភេទស្បែកជើង (Categories)</label>
+              <label className="form-label" style={{ fontWeight: 700 }}>{t('ប្រភេទស្បែកជើង', 'Categories')}</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <button
                   onClick={() => setSelectedCategory('all')}
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
                     textAlign: 'left',
                     padding: '8px 12px',
                     borderRadius: '8px',
@@ -139,39 +150,56 @@ export default function ShopView({ onOpenSizeGuide }) {
                     fontSize: '0.88rem'
                   }}
                 >
-                  👟 ទាំងអស់ (All Categories)
+                  <Grid size={15} />
+                  <span>{t('ទាំងអស់', 'All Categories')}</span>
                 </button>
-                {categories.map(c => (
-                  <button
-                    key={c.id}
-                    onClick={() => setSelectedCategory(c.id)}
-                    style={{
-                      textAlign: 'left',
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      background: selectedCategory === c.id ? 'rgba(255, 94, 54, 0.15)' : 'transparent',
-                      color: selectedCategory === c.id ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                      fontWeight: selectedCategory === c.id ? 700 : 500,
-                      cursor: 'pointer',
-                      fontSize: '0.88rem'
-                    }}
-                  >
-                    {c.icon} {c.name}
-                  </button>
-                ))}
+                {categories.map(c => {
+                  const getIcon = (id) => {
+                    switch (id) {
+                      case 'sneakers': return <Footprints size={15} />;
+                      case 'formal': return <Briefcase size={15} />;
+                      case 'casual': return <Compass size={15} />;
+                      case 'sandals': return <Sun size={15} />;
+                      case 'sale': return <Flame size={15} />;
+                      default: return <Grid size={15} />;
+                    }
+                  };
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => setSelectedCategory(c.id)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        textAlign: 'left',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: selectedCategory === c.id ? 'rgba(255, 94, 54, 0.15)' : 'transparent',
+                        color: selectedCategory === c.id ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                        fontWeight: selectedCategory === c.id ? 700 : 500,
+                        cursor: 'pointer',
+                        fontSize: '0.88rem'
+                      }}
+                    >
+                      {getIcon(c.id)}
+                      <span>{c.khmerName ? t(c.khmerName, c.name) : c.name}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Brand Selector */}
             <div style={{ marginBottom: '22px' }}>
-              <label className="form-label" style={{ fontWeight: 700 }}>ម៉ាក / Brand</label>
+              <label className="form-label" style={{ fontWeight: 700 }}>{t('ម៉ាកយីហោ', 'Brands')}</label>
               <select
                 value={selectedBrand}
                 onChange={(e) => setSelectedBrand(e.target.value)}
                 className="form-select"
               >
-                <option value="all">គ្រប់ម៉ាកទាំងអស់ (All Brands)</option>
+                <option value="all">{t('គ្រប់ម៉ាកទាំងអស់', 'All Brands')}</option>
                 {brands.map(b => (
                   <option key={b.id} value={b.name}>{b.name}</option>
                 ))}
@@ -181,7 +209,7 @@ export default function ShopView({ onOpenSizeGuide }) {
             {/* Shoe Size Selector (EU 38-45) */}
             <div style={{ marginBottom: '22px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <label className="form-label" style={{ margin: 0, fontWeight: 700 }}>ទំហំ EU Size</label>
+                <label className="form-label" style={{ margin: 0, fontWeight: 700 }}>{t('ទំហំ EU Size', 'EU Size')}</label>
                 <button
                   onClick={onOpenSizeGuide}
                   style={{ background: 'none', border: 'none', color: '#00d2ff', fontSize: '0.72rem', cursor: 'pointer', textDecoration: 'underline' }}
@@ -276,23 +304,27 @@ export default function ShopView({ onOpenSizeGuide }) {
             {hasActiveFilters && (
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
                 {selectedCategory !== 'all' && (
-                  <span className="badge badge-hot" style={{ cursor: 'pointer' }} onClick={() => setSelectedCategory('all')}>
-                    ប្រភេទ: {selectedCategory} ✕
+                  <span className="badge badge-hot" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }} onClick={() => setSelectedCategory('all')}>
+                    <span>ប្រភេទ: {selectedCategory}</span>
+                    <X size={12} />
                   </span>
                 )}
                 {selectedBrand !== 'all' && (
-                  <span className="badge badge-new" style={{ cursor: 'pointer' }} onClick={() => setSelectedBrand('all')}>
-                    Brand: {selectedBrand} ✕
+                  <span className="badge badge-new" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }} onClick={() => setSelectedBrand('all')}>
+                    <span>Brand: {selectedBrand}</span>
+                    <X size={12} />
                   </span>
                 )}
                 {selectedSize !== null && (
-                  <span className="badge badge-success" style={{ cursor: 'pointer' }} onClick={() => setSelectedSize(null)}>
-                    Size: EU {selectedSize} ✕
+                  <span className="badge badge-success" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }} onClick={() => setSelectedSize(null)}>
+                    <span>Size: EU {selectedSize}</span>
+                    <X size={12} />
                   </span>
                 )}
                 {searchQuery && (
-                  <span className="badge badge-hot" style={{ cursor: 'pointer' }} onClick={() => setSearchQuery('')}>
-                    Search: "{searchQuery}" ✕
+                  <span className="badge badge-hot" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }} onClick={() => setSearchQuery('')}>
+                    <span>Search: "{searchQuery}"</span>
+                    <X size={12} />
                   </span>
                 )}
               </div>
@@ -301,12 +333,12 @@ export default function ShopView({ onOpenSizeGuide }) {
             {/* Loading / Empty / Products Grid */}
             {loading ? (
               <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-secondary)' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '12px' }}>👟</div>
+                <ShoppingBag size={42} color="var(--accent-primary)" style={{ marginBottom: '12px', opacity: 0.8 }} />
                 <div>កំពុងផ្ទុកទិន្នន័យស្បែកជើង...</div>
               </div>
             ) : products.length === 0 ? (
               <div className="glass-panel" style={{ textAlign: 'center', padding: '60px 20px', borderRadius: 'var(--radius-lg)' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🔍</div>
+                <Search size={54} color="var(--text-muted)" style={{ marginBottom: '16px', opacity: 0.4 }} />
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>មិនមានស្បែកជើងដែលត្រូវនឹងតម្រូវការនេះទេ</h3>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '20px' }}>
                   សូមសាកល្បងផ្លាស់ប្តូរពាក្យស្វែងរក ឬកែសម្រួលតម្រង Size / Category

@@ -2,43 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import * as api from '../services/api';
 import ProductCard from '../components/ProductCard';
-import {
-  ArrowRight,
-  Sparkles,
-  Tag,
-  Check,
-  Copy,
-  Ruler,
-  ChevronRight,
-  ShieldCheck,
-  Award,
-  Send
-} from 'lucide-react';
 
 export default function HomeView({ onOpenSizeGuide }) {
-  const { navigateTo, setSelectedCategory, showToast, t } = useStore();
+  const { navigateTo, setSelectedCategory, showToast, lang, t } = useStore();
+  const [allProducts, setAllProducts] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [copiedCoupon, setCopiedCoupon] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Product Cycling State (Clean Alternating, No 360 Tilt)
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     async function loadHomeData() {
       try {
         setLoading(true);
-        const [prodRes, catRes] = await Promise.all([
-          api.fetchProducts(),
-          api.fetchCategories()
-        ]);
+        const prodRes = await api.fetchProducts();
 
-        if (prodRes.success) {
+        if (prodRes.success && prodRes.data.length > 0) {
+          setAllProducts(prodRes.data);
           setFeaturedProducts(prodRes.data.filter(p => p.isFeatured));
           setNewArrivals(prodRes.data.filter(p => p.isNewArrival || p.badge === 'New'));
-        }
-
-        if (catRes.success) {
-          setCategories(catRes.data);
         }
       } catch (err) {
         console.error('Failed to load home data:', err);
@@ -49,11 +35,29 @@ export default function HomeView({ onOpenSizeGuide }) {
     loadHomeData();
   }, []);
 
+  // Auto-cycle through all products smoothly every 5 seconds (5s auto change)
+  useEffect(() => {
+    if (allProducts.length <= 1 || isHovered) return;
+    const interval = setInterval(() => {
+      setCurrentHeroIndex(prev => (prev + 1) % allProducts.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [allProducts.length, isHovered]);
+
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code);
     setCopiedCoupon(code);
-    showToast(`📋 បានចម្លងកូដ ${code} រួចរាល់!`);
+    showToast(t(`បានចម្លងកូដ ${code} រួចរាល់!`, `Code ${code} copied!`));
     setTimeout(() => setCopiedCoupon(null), 3000);
+  };
+
+  const currentHeroProduct = (allProducts.length > 0 && allProducts[currentHeroIndex]) || {
+    id: 'nike-air-vapormax',
+    name: 'Nike Air VaporMax Flyknit',
+    khmerName: 'ស្បែកជើង Nike Air VaporMax',
+    price: 135,
+    images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=2400&q=95'],
+    brand: 'Nike'
   };
 
   const handleCategorySelect = (catId) => {
@@ -85,7 +89,7 @@ export default function HomeView({ onOpenSizeGuide }) {
 
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '28px', maxWidth: '520px' }}>
               {t(
-                'ស្វែងរកស្បែកជើងគ្រប់ប្រភេទ Sneakers, Formal, Casual និង Sandals គុណភាពខ្ពស់ ធានាប្តូរ Size រយៈពេល ៧ ថ្ងៃ និងគាំទ្រការទូទាត់រហ័សតាម KHQR Bakong។',
+                'ស្វែងរកស្បែកជើងគ្រប់ប្រភេទ កីឡា ធ្វើការ ស៊ក និងផ្ទាត់ គុណភាពខ្ពស់ ធានាប្តូរទំហំ ៧ ថ្ងៃ និងគាំទ្រការទូទាត់រហ័សតាម KHQR Bakong។',
                 'Discover premium shoes for every occasion: Sneakers, Formal, Casual and Sandals. 7-day size exchange guarantee with instant KHQR Bakong checkout.'
               )}
             </p>
@@ -96,15 +100,13 @@ export default function HomeView({ onOpenSizeGuide }) {
                 className="btn btn-primary btn-lg"
               >
                 <span>{t('ទស្សនាស្បែកជើងទាំងអស់', 'Shop All Shoes')}</span>
-                <ArrowRight size={18} />
               </button>
 
               <button
                 onClick={onOpenSizeGuide}
                 className="btn btn-secondary btn-lg"
               >
-                <Ruler size={18} />
-                <span>{t('តារាងវាស់ទំហំ (Size Guide)', 'Size Guide')}</span>
+                <span>{t('តារាងវាស់ទំហំ', 'Size Guide')}</span>
               </button>
             </div>
 
@@ -131,49 +133,138 @@ export default function HomeView({ onOpenSizeGuide }) {
             </div>
           </div>
 
-          {/* Right Floating Shoe Graphic */}
-          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{
-              position: 'absolute',
-              width: '360px',
-              height: '360px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(255, 87, 34, 0.12) 0%, transparent 70%)',
-              filter: 'blur(30px)',
-              zIndex: 0
-            }} />
-
-            <div className="animate-float" style={{ position: 'relative', zIndex: 1, maxWidth: '480px', width: '100%' }}>
-              <img
-                src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=85"
-                alt="Nike Air VaporMax Featured Shoe"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: 'var(--radius-xl)',
-                  boxShadow: 'var(--shadow-lg)',
-                  border: '1px solid var(--border-light)',
-                  filter: 'drop-shadow(0 15px 25px rgba(0,0,0,0.5))'
-                }}
-              />
-              {/* Floating Overlay Badge */}
-              <div className="glass-panel" style={{
-                position: 'absolute',
-                bottom: '-15px',
-                left: '20px',
-                padding: '12px 18px',
-                borderRadius: 'var(--radius-md)',
+          {/* Right Alternating Product Showcase (Clean, No 360 Tilt) */}
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '460px', margin: '0 auto' }}>
+            <div 
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              style={{
+                position: 'relative',
+                width: '100%',
+                height: '350px',
+                userSelect: 'none',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
-                boxShadow: 'var(--shadow-md)'
-              }}>
-                <span style={{ fontSize: '1.8rem' }}>👟</span>
+                justifyContent: 'center',
+                background: 'rgba(15, 23, 42, 0.7)',
+                borderRadius: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                overflow: 'hidden'
+              }}
+            >
+              {/* Clean Flat Shoe Photography */}
+              <img
+                key={currentHeroProduct.id || currentHeroIndex}
+                src={(currentHeroProduct?.images && currentHeroProduct.images[0]) || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff'}
+                alt={currentHeroProduct.name}
+                draggable={false}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'opacity 0.4s ease',
+                  pointerEvents: 'none'
+                }}
+              />
+
+              {/* Floating Bottom Badge */}
+              <div 
+                onClick={() => navigateTo('product-detail', currentHeroProduct.id)}
+                style={{
+                  position: 'absolute',
+                  bottom: '16px',
+                  left: '16px',
+                  right: '16px',
+                  padding: '12px 18px',
+                  borderRadius: '16px',
+                  background: 'rgba(15, 23, 42, 0.88)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  zIndex: 10
+                }}
+              >
                 <div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700 }}>Nike Air VaporMax Flyknit</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--accent-primary)', fontWeight: 600 }}>$135.00 • Best Seller</div>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#ffffff' }}>
+                    {lang === 'km' && currentHeroProduct.khmerName ? currentHeroProduct.khmerName : currentHeroProduct.name}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 700, marginTop: '2px' }}>
+                    ${(Number(currentHeroProduct?.price) || 0).toFixed(2)} • {t('ពេញនិយមបំផុត', 'Best Seller')}
+                  </div>
+                </div>
+
+                <div style={{
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  background: 'var(--accent-primary)',
+                  color: '#ffffff',
+                  fontSize: '0.8rem',
+                  fontWeight: 700
+                }}>
+                  {t('ទស្សនា', 'View')}
                 </div>
               </div>
+            </div>
+
+            {/* Alternating Controls: Prev / Next / Indicator Dots */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '14px' }}>
+              <button
+                type="button"
+                onClick={() => setCurrentHeroIndex(prev => (prev - 1 + (allProducts.length || 1)) % (allProducts.length || 1))}
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid var(--border-light)',
+                  color: 'var(--text-primary)',
+                  padding: '5px 14px',
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  fontWeight: 700
+                }}
+              >
+                {t('ថយក្រោយ', 'Prev')}
+              </button>
+
+              <div style={{ display: 'flex', gap: '6px' }}>
+                {(allProducts.length > 0 ? allProducts.slice(0, 8) : [1, 2, 3, 4]).map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentHeroIndex(idx)}
+                    style={{
+                      width: currentHeroIndex === idx ? '22px' : '7px',
+                      height: '7px',
+                      borderRadius: '4px',
+                      background: currentHeroIndex === idx ? 'var(--accent-primary)' : 'rgba(255,255,255,0.2)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      transition: 'all 0.25s ease'
+                    }}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setCurrentHeroIndex(prev => (prev + 1) % (allProducts.length || 1))}
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid var(--border-light)',
+                  color: 'var(--text-primary)',
+                  padding: '5px 14px',
+                  borderRadius: '16px',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  fontWeight: 700
+                }}
+              >
+                {t('បន្ទាប់', 'Next')}
+              </button>
             </div>
           </div>
         </div>
@@ -213,10 +304,9 @@ export default function HomeView({ onOpenSizeGuide }) {
               <span>{t('កូដ 10%៖', '10% Code:')} <strong>STEPUP10</strong></span>
               <button
                 onClick={() => handleCopyCode('STEPUP10')}
-                style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                title="Copy code"
+                style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem' }}
               >
-                {copiedCoupon === 'STEPUP10' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                {copiedCoupon === 'STEPUP10' ? t('ចម្លងរួច', 'Copied') : t('ចម្លង', 'Copy')}
               </button>
             </div>
 
@@ -230,77 +320,14 @@ export default function HomeView({ onOpenSizeGuide }) {
               border: '1px dashed var(--border-hover)',
               fontSize: '0.85rem'
             }}>
-              <span>{t('កូដ $20 Off៖', '$20 Off Code:')} <strong>WELCOME20</strong></span>
+              <span>{t('កូដបញ្ចុះតម្លៃ $20៖', '$20 Off Code:')} <strong>WELCOME20</strong></span>
               <button
                 onClick={() => handleCopyCode('WELCOME20')}
-                style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                title="Copy code"
+                style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', fontWeight: 700, fontSize: '0.8rem' }}
               >
-                {copiedCoupon === 'WELCOME20' ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                {copiedCoupon === 'WELCOME20' ? t('ចម្លងរួច', 'Copied') : t('ចម្លង', 'Copy')}
               </button>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories Grid */}
-      <section style={{ padding: '60px 0' }}>
-        <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
-            <div>
-              <div className="badge badge-new" style={{ marginBottom: '8px' }}>
-                {t('រចនាសម្ព័ន្ធប្រភេទទំនិញ', 'Categories')}
-              </div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
-                {t('ប្រភេទស្បែកជើងចម្បង', 'Featured Categories')}
-              </h2>
-            </div>
-            <button
-              onClick={() => { setSelectedCategory('all'); navigateTo('shop'); }}
-              className="btn btn-secondary btn-sm"
-            >
-              <span>{t('មើលទាំងអស់', 'View All')}</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '18px'
-          }}>
-            {categories.map(cat => (
-              <div
-                key={cat.id}
-                onClick={() => handleCategorySelect(cat.id)}
-                className="glass-panel"
-                style={{
-                  padding: '24px 20px',
-                  borderRadius: 'var(--radius-md)',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  border: '1px solid var(--border-light)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent-primary)';
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border-light)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>{cat.icon}</div>
-                <h4 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{cat.name}</h4>
-                <div style={{ fontSize: '0.82rem', color: 'var(--accent-primary)', fontWeight: 600, marginBottom: '6px' }}>
-                  {cat.khmerName}
-                </div>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  {cat.description}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -311,7 +338,7 @@ export default function HomeView({ onOpenSizeGuide }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
               <div className="badge badge-hot" style={{ marginBottom: '8px' }}>
-                Bestseller Collections
+                {t('បណ្តុំស្បែកជើងពេញនិយម', 'Bestseller Collections')}
               </div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
                 {t('ស្បែកជើងពេញនិយម', 'Featured Shoes')}
@@ -322,7 +349,6 @@ export default function HomeView({ onOpenSizeGuide }) {
               className="btn btn-secondary btn-sm"
             >
               <span>{t('ទស្សនាបន្ថែម', 'View More')}</span>
-              <ChevronRight size={16} />
             </button>
           </div>
 
@@ -334,51 +360,12 @@ export default function HomeView({ onOpenSizeGuide }) {
         </div>
       </section>
 
-      {/* Telegram Real-Time Alert Banner Showcase */}
-      <section style={{ padding: '20px 0 50px' }}>
-        <div className="container">
-          <div className="glass-panel" style={{
-            padding: '36px',
-            borderRadius: 'var(--radius-lg)',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-light)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '24px'
-          }}>
-            <div style={{ maxWidth: '600px' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', marginBottom: '10px' }} className="badge badge-new">
-                Telegram Bot Integration
-              </div>
-              <h3 style={{ fontSize: '1.45rem', marginBottom: '10px' }}>
-                {t('ប្រព័ន្ធផ្ញើសារដំណឹងការបញ្ជាទិញទៅ Telegram ភ្លាមៗ', 'Real-Time Order Notifications via Telegram')}
-              </h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                {t(
-                  'រាល់ការកុម្ម៉ង់ទិញស្បែកជើងនៅលើ Website នឹងត្រូវរៀបចំបញ្ជូនសារជូនដំណឹងភ្លាមៗទៅកាន់ Telegram របស់ម្ចាស់ហាង (Email: chhoyyeanseou5@gmail.com) រួមមានលេខកូដទំនិញ ឈ្មោះ អតិថិជន លេខទូរស័ព្ទ ទំហំ Size និងទីតាំងដឹកជញ្ជូន។',
-                  'Every order placed on the website automatically sends instant notification alerts directly to Telegram for the store manager, including product codes, customer name, phone number, shoe size, and shipping address.'
-                )}
-              </p>
-            </div>
-            <button
-              onClick={() => navigateTo('shop')}
-              className="btn btn-primary btn-lg"
-            >
-              <span>{t('សាកល្បងបញ្ជាទិញឥឡូវនេះ', 'Shop Now')}</span>
-              <ArrowRight size={18} />
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* New Shoe Arrivals */}
       <section style={{ padding: '20px 0 80px' }}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
-              <div className="badge badge-new" style={{ marginBottom: '8px' }}>New Arrivals 2026</div>
+              <div className="badge badge-new" style={{ marginBottom: '8px' }}>{t('ទំនិញមកដល់ថ្មី ២០២៦', 'New Arrivals 2026')}</div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
                 {t('ស្បែកជើងមកដល់ថ្មី', 'New Shoe Arrivals')}
               </h2>
@@ -388,7 +375,6 @@ export default function HomeView({ onOpenSizeGuide }) {
               className="btn btn-secondary btn-sm"
             >
               <span>{t('មើលទាំងអស់', 'View All')}</span>
-              <ChevronRight size={16} />
             </button>
           </div>
 

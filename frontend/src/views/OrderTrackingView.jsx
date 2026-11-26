@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useStore } from '../context/StoreContext';
 import * as api from '../services/api';
 import { 
   Search, 
@@ -8,10 +9,12 @@ import {
   Clock, 
   MapPin, 
   ShieldCheck, 
-  AlertCircle 
+  AlertCircle,
+  Phone
 } from 'lucide-react';
 
 export default function OrderTrackingView() {
+  const { lang, t } = useStore();
   const [query, setQuery] = useState('');
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -77,13 +80,13 @@ export default function OrderTrackingView() {
         {/* Title */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div className="badge badge-hot" style={{ marginBottom: '8px' }}>
-            <Truck size={14} /> LIVE TRACKING
+            <Truck size={14} /> {t('តាមដានផ្ទាល់', 'Live Tracking')}
           </div>
           <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '8px' }}>
-            តាមដានការដឹកជញ្ជូនស្បែកជើង (Order Tracking)
+            {t('តាមដានការដឹកជញ្ជូនស្បែកជើង', 'Order Tracking')}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
-            បញ្ចូលលេខកូដបញ្ជាទិញ (Order ID) ឬលេខទូរស័ព្ទរបស់អ្នកដើម្បីពិនិត្យស្ថានភាព
+            {t('បញ្ចូលលេខកូដបញ្ជាទិញ ឬលេខទូរស័ព្ទរបស់អ្នកដើម្បីពិនិត្យស្ថានភាព', 'Enter your Order ID or phone number to check status')}
           </p>
         </div>
 
@@ -97,7 +100,7 @@ export default function OrderTrackingView() {
             <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
               <input
                 type="text"
-                placeholder="ឧ. ORD-20261107-7460 ឬ លេខទូរស័ព្ទ 012889900"
+                placeholder={t('ឧ. ORD-20261107-7460 ឬ លេខទូរស័ព្ទ 012889900', 'e.g. ORD-20261107-7460 or phone number...')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="form-input"
@@ -107,14 +110,14 @@ export default function OrderTrackingView() {
             </div>
 
             <button type="submit" disabled={loading} className="btn btn-primary btn-lg">
-              <span>{loading ? 'កំពុងស្វែងរក...' : 'តាមដានឥឡូវនេះ'}</span>
+              <span>{loading ? t('កំពុងស្វែងរក...', 'Searching...') : t('តាមដានឥឡូវនេះ', 'Track Now')}</span>
               <Truck size={18} />
             </button>
           </div>
 
           {/* Quick Demo Buttons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '16px', fontSize: '0.82rem', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
-            <span>សាកល្បងលេខកូដគំរូ:</span>
+            <span>{t('សាកល្បងលេខកូដគំរូ:', 'Sample Tracking ID:')}</span>
             <button
               type="button"
               onClick={() => handleQuickTrack('ORD-20261107-7460')}
@@ -132,9 +135,9 @@ export default function OrderTrackingView() {
             <button
               type="button"
               onClick={() => handleQuickTrack('012889900')}
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-light)', color: '#10b981', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-light)', color: '#10b981', padding: '4px 10px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             >
-              📞 012 889 900
+              <Phone size={12} /> 012 889 900
             </button>
           </div>
         </form>
@@ -171,21 +174,21 @@ export default function OrderTrackingView() {
               marginBottom: '28px'
             }}>
               <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>កូដការបញ្ជាទិញ</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('កូដការបញ្ជាទិញ', 'Order ID')}</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--accent-primary)' }}>
                   #{order.orderNumber || order.id}
                 </div>
               </div>
 
               <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>កូដដឹកជញ្ជូន (Tracking #)</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('កូដដឹកជញ្ជូន', 'Tracking Number')}</div>
                 <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>
                   {order.trackingNumber || order.orderNumber || 'DELIV-PP-8821'}
                 </div>
               </div>
 
               <div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>ស្ថានភាពបច្ចុប្បន្ន</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('ស្ថានភាពបច្ចុប្បន្ន', 'Current Status')}</div>
                 <span className="badge badge-success" style={{ fontSize: '0.85rem' }}>
                   {order.orderStatus || order.status || 'PENDING'}
                 </span>
@@ -225,10 +228,10 @@ export default function OrderTrackingView() {
                         {idx === 3 && <ShieldCheck size={20} />}
                       </div>
                       <div style={{ fontSize: '0.82rem', fontWeight: isDone ? 700 : 500, color: isDone ? 'var(--text-primary)' : 'var(--text-muted)' }}>
-                        {step === 'Confirmed' && 'បញ្ជាក់ការកុម្ម៉ង់'}
-                        {step === 'Processing' && 'រៀបចំទំនិញ'}
-                        {step === 'Shipped' && 'កំពុងដឹកជញ្ជូន'}
-                        {step === 'Delivered' && 'បានប្រគល់ជូន'}
+                        {step === 'Confirmed' && t('បញ្ជាក់ការកុម្ម៉ង់', 'Confirmed')}
+                        {step === 'Processing' && t('រៀបចំទំនិញ', 'Processing')}
+                        {step === 'Shipped' && t('កំពុងដឹកជញ្ជូន', 'Shipped')}
+                        {step === 'Delivered' && t('បានប្រគល់ជូន', 'Delivered')}
                       </div>
                     </div>
                   );
@@ -247,7 +250,7 @@ export default function OrderTrackingView() {
               }}>
                 <h4 style={{ fontSize: '0.98rem', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Clock size={16} color="var(--accent-primary)" />
-                  <span>កំណត់ត្រាលំហូរដឹកជញ្ជូន (Activity Timeline)</span>
+                  <span>{t('កំណត់ត្រាលំហូរដឹកជញ្ជូន', 'Activity Timeline')}</span>
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {(order.timeline || order.statusTimeline || []).map((event, idx) => (
@@ -267,7 +270,7 @@ export default function OrderTrackingView() {
             )}
 
             {/* Items in Order */}
-            <h4 style={{ fontSize: '1rem', marginBottom: '14px' }}>ទំនិញក្នុងកញ្ចប់ដឹកជញ្ជូន ({order.items?.length || 0})</h4>
+            <h4 style={{ fontSize: '1rem', marginBottom: '14px' }}>{t('ទំនិញក្នុងកញ្ចប់ដឹកជញ្ជូន', 'Items in Package')} ({order.items?.length || 0})</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {(order.items || []).map((item, idx) => (
                 <div key={idx} style={{
@@ -281,9 +284,9 @@ export default function OrderTrackingView() {
                 }}>
                   <img src={item.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100'} alt={item.name} style={{ width: '48px', height: '48px', borderRadius: '6px', objectFit: 'cover' }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{item.name}</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{lang === 'km' && item.khmerName ? item.khmerName : item.name}</div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                      ទំហំ EU {item.size || 'Free'} • ពណ៌: {item.color || 'Standard'} • ចំនួន x{item.quantity || 1}
+                      {t(`ទំហំ៖ ${item.size || 'Free'}`, `Size: ${item.size || 'Free'}`)} • {t('ពណ៌', 'Color')}: {item.color || 'Standard'} • {t('ចំនួន', 'Qty')}: x{item.quantity || 1}
                     </div>
                   </div>
                   <div style={{ fontWeight: 700 }}>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, LogIn, AlertCircle, Loader, Eye, EyeOff, Sparkles, ShieldCheck } from 'lucide-react';
+import { useStore } from '../context/StoreContext';
+import { X, Mail, Lock, User, LogIn, AlertCircle, Loader, Eye, EyeOff, Sparkles, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { loginWithEmail, registerWithEmail, loginWithGoogle, quickDemoLogin } from '../services/authService';
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
+  const { t } = useStore();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -143,11 +145,11 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             height: '54px',
             borderRadius: '16px',
             background: 'linear-gradient(135deg, #ff5e36, #ff9900)',
-            fontSize: '1.9rem',
             marginBottom: '10px',
-            boxShadow: '0 6px 18px rgba(255, 94, 54, 0.4)'
+            boxShadow: '0 6px 18px rgba(255, 94, 54, 0.4)',
+            color: '#ffffff'
           }}>
-            👟
+            <ShoppingBag size={28} />
           </div>
           <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: '0 0 6px 0' }}>
             {isRegister ? 'បង្កើតគណនីថ្មី' : 'ចូលគណនី StepUp'}
@@ -157,7 +159,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           </p>
         </div>
 
-        {/* ⚡ 1-Click Quick Demo Accounts Section */}
+        {/* 1-Click Quick Demo Accounts Section */}
         <div style={{
           background: 'linear-gradient(135deg, rgba(255, 94, 54, 0.12), rgba(255, 153, 0, 0.08))',
           border: '1px solid rgba(255, 94, 54, 0.3)',
@@ -172,10 +174,10 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             marginBottom: '10px'
           }}>
             <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--accent-primary, #ff5e36)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <Sparkles size={15} /> ចូលគណនី Demo ភ្លាមៗ (1-Click Demo):
+              <Sparkles size={15} /> {t('ចូលគណនីគំរូភ្លាមៗ៖', '1-Click Quick Demo:')}
             </span>
             <span style={{ fontSize: '0.72rem', color: 'var(--text-muted, #9ca3af)' }}>
-              សម្រាប់ធ្វើ Demo
+              {t('សម្រាប់តេស្ត', 'For Demo')}
             </span>
           </div>
 
@@ -201,8 +203,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'}
               title="Click to instantly login as jinwoo CG"
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700, fontSize: '0.82rem' }}>
-                <span>👤</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '0.82rem' }}>
+                <User size={14} color="var(--accent-primary, #ff5e36)" />
                 <span>jinwoo CG (Real)</span>
               </div>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary, #9ca3af)', marginTop: '2px' }}>
@@ -231,8 +233,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'}
               title="Click to instantly login as Admin StepUp"
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700, fontSize: '0.82rem' }}>
-                <span>👑</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '0.82rem' }}>
+                <ShieldCheck size={14} color="#f59e0b" />
                 <span>Admin StepUp</span>
               </div>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary, #9ca3af)', marginTop: '2px' }}>
@@ -266,7 +268,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               transition: 'all 0.2s'
             }}
           >
-            ចូលគណនី (Sign In)
+            {t('ចូលគណនី', 'Sign In')}
           </button>
           <button
             type="button"
@@ -284,7 +286,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               transition: 'all 0.2s'
             }}
           >
-            ចុះឈ្មោះ (Sign Up)
+            {t('ចុះឈ្មោះ', 'Sign Up')}
           </button>
         </div>
 

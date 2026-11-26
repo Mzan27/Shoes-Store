@@ -17,11 +17,11 @@ import { db } from './firebase';
 
 // Static fallbacks for categories & brands
 const DEFAULT_CATEGORIES = [
-  { id: 'sneakers', name: 'Sneakers', khmerName: 'ស្បែកជើងកីឡា/Sneakers', icon: '👟', description: 'កីឡា ដើរកម្សាន្ត និងម៉ូដទាន់សម័យ' },
-  { id: 'formal', name: 'Formal', khmerName: 'ស្បែកជើងធ្វើការ/Formal', icon: '👞', description: 'ស្បែកជើងការិយាល័យ ភាពថ្លៃថ្នូរ និងភាពទាក់ទាញ' },
-  { id: 'casual', name: 'Casual', khmerName: 'ស្បែកជើងស៊ក/Casual', icon: '🥾', description: 'ប្រើប្រាស់ប្រចាំថ្ងៃ ងាយស្រួលពាក់ និងស្រួលជើង' },
-  { id: 'sandals', name: 'Sandals', khmerName: 'ស្បែកជើងផ្ទាត់/Sandals', icon: '🩴', description: 'ផាសុកភាព ម៉ូដទាន់សម័យ និងធន់នឹងទឹក' },
-  { id: 'sale', name: 'Sale & Promotion', khmerName: 'ទំនិញបញ្ចុះតម្លៃពិសេស', icon: '🔥', description: 'ការបញ្ចុះតម្លៃរហូតដល់ 40%' }
+  { id: 'sneakers', name: 'Sneakers', khmerName: 'ស្បែកជើងកីឡា/Sneakers', icon: 'footprints', description: 'កីឡា ដើរកម្សាន្ត និងម៉ូដទាន់សម័យ' },
+  { id: 'formal', name: 'Formal', khmerName: 'ស្បែកជើងធ្វើការ/Formal', icon: 'briefcase', description: 'ស្បែកជើងការិយាល័យ ភាពថ្លៃថ្នូរ និងភាពទាក់ទាញ' },
+  { id: 'casual', name: 'Casual', khmerName: 'ស្បែកជើងស៊ក/Casual', icon: 'compass', description: 'ប្រើប្រាស់ប្រចាំថ្ងៃ ងាយស្រួលពាក់ និងស្រួលជើង' },
+  { id: 'sandals', name: 'Sandals', khmerName: 'ស្បែកជើងផ្ទាត់/Sandals', icon: 'sun', description: 'ផាសុកភាព ម៉ូដទាន់សម័យ និងធន់នឹងទឹក' },
+  { id: 'sale', name: 'Sale & Promotion', khmerName: 'ទំនិញប្រូម៉ូសិន', icon: 'flame', description: 'ការបញ្ចុះតម្លៃពិសេស' }
 ];
 
 const DEFAULT_BRANDS = [
@@ -622,8 +622,9 @@ export async function fetchStoreSettings() {
         currencySymbol: '$',
         khqrEnabled: true,
         codEnabled: true,
-        khqrReceiverName: 'SHOES STORE STEPUP',
-        abaAccount: '000 892 123 (STEPUP SHOES CO.)',
+        khqrReceiverName: 'NET NAI',
+        khqrImage: '/aba-khqr.jpg',
+        abaAccount: '012 402 485 (USD) / 012 402 486 (KHR) - NET NAI',
         acledaAccount: '1234-5678-9012 (STEPUP SHOES CO.)',
         wingAccount: '012 345 678 (STEPUP SHOES)'
       }
@@ -636,8 +637,9 @@ export async function fetchStoreSettings() {
         phone: '012 345 678',
         shippingFee: 1.50,
         freeShippingThreshold: 50.00,
-        khqrReceiverName: 'SHOES STORE STEPUP',
-        abaAccount: '000 892 123 (STEPUP SHOES CO.)',
+        khqrReceiverName: 'NET NAI',
+        khqrImage: '/aba-khqr.jpg',
+        abaAccount: '012 402 485 (USD) / 012 402 486 (KHR) - NET NAI',
         acledaAccount: '1234-5678-9012 (STEPUP SHOES CO.)',
         wingAccount: '012 345 678 (STEPUP SHOES)'
       }

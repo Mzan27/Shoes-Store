@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { X, Check, Ruler, Info } from 'lucide-react';
+import { useStore } from '../context/StoreContext';
+import { X, Check, Ruler, Info, Footprints, Edit3, Zap } from 'lucide-react';
 
 export default function SizeGuideModal({ isOpen, onClose }) {
+  const { t } = useStore();
   const [cmInput, setCmInput] = useState('');
   const [recommendedSize, setRecommendedSize] = useState(null);
 
@@ -96,9 +98,9 @@ export default function SizeGuideModal({ isOpen, onClose }) {
             <Ruler size={24} />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.3rem' }}>តារាងណែនាំការវាស់ទំហំជើង (Shoe Size Guide)</h3>
+            <h3 style={{ fontSize: '1.3rem' }}>{t('តារាងណែនាំការវាស់ទំហំជើង', 'Shoe Size Guide')}</h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              វិធីសាស្រ្តវាស់ប្រវែងបាតជើងដើម្បីជ្រើសរើសទំហំ EU ឱ្យត្រូវឥតខ្ចោះ
+              {t('វិធីសាស្រ្តវាស់ប្រវែងបាតជើងដើម្បីជ្រើសរើសទំហំ EU ឱ្យត្រូវឥតខ្ចោះ', 'How to measure your feet to choose the perfect shoe size')}
             </p>
           </div>
         </div>
@@ -111,19 +113,28 @@ export default function SizeGuideModal({ isOpen, onClose }) {
           marginBottom: '26px'
         }}>
           <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
-            <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '8px' }}>🦶 1. ដាក់ជើង</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent-primary)', fontWeight: 700 }}>
+              <Footprints size={18} />
+              <span>1. ដាក់ជើង</span>
+            </div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               ដាក់បាតជើងលើក្រដាសស ដោយកែងជើងផ្អែកនឹងជញ្ជាំងត្រង់។
             </p>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
-            <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '8px' }}>✏️ 2. គូសចំណុច</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent-primary)', fontWeight: 700 }}>
+              <Edit3 size={18} />
+              <span>2. គូសចំណុច</span>
+            </div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               គូសបន្ទាត់នៅត្រង់ចុងមេជើងដែលវែងជាងគេ និងកែងជើង។
             </p>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
-            <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '8px' }}>📏 3. វាស់សង់ទីម៉ែត្រ</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: 'var(--accent-primary)', fontWeight: 700 }}>
+              <Ruler size={18} />
+              <span>3. វាស់សង់ទីម៉ែត្រ</span>
+            </div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               វាស់ចំងាយជា cm រួចផ្ទៀងផ្ទាត់ជាមួយតារាងខាងក្រោម។
             </p>
@@ -139,7 +150,8 @@ export default function SizeGuideModal({ isOpen, onClose }) {
           marginBottom: '26px'
         }}>
           <h4 style={{ fontSize: '0.95rem', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span>⚡ គណនាទំហំស្វ័យប្រវត្តិ (Quick Calculator)</span>
+            <Zap size={16} color="var(--accent-primary)" />
+            <span>{t('គណនាទំហំស្វ័យប្រវត្តិ', 'Quick Size Calculator')}</span>
           </h4>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <input 
@@ -176,7 +188,7 @@ export default function SizeGuideModal({ isOpen, onClose }) {
         </form>
 
         {/* Size Chart Table */}
-        <h4 style={{ fontSize: '1rem', marginBottom: '12px' }}>តារាងប្រៀបធៀបទំហំ (Standard Size Table)</h4>
+        <h4 style={{ fontSize: '1rem', marginBottom: '12px' }}>{t('តារាងប្រៀបធៀបទំហំ', 'Standard Size Chart')}</h4>
         <div style={{ overflowX: 'auto' }}>
           <table style={{
             width: '100%',
@@ -186,10 +198,10 @@ export default function SizeGuideModal({ isOpen, onClose }) {
           }}>
             <thead>
               <tr style={{ background: 'rgba(255, 255, 255, 0.06)', borderBottom: '1px solid var(--border-light)' }}>
-                <th style={{ padding: '12px' }}>ប្រវែងជើង (CM)</th>
-                <th style={{ padding: '12px' }}>ទំហំ EU</th>
-                <th style={{ padding: '12px' }}>US បុរស (Men)</th>
-                <th style={{ padding: '12px' }}>US នារី (Women)</th>
+                <th style={{ padding: '12px' }}>{t('ប្រវែងជើង (CM)', 'Foot Length (CM)')}</th>
+                <th style={{ padding: '12px' }}>{t('ទំហំ EU', 'EU Size')}</th>
+                <th style={{ padding: '12px' }}>{t('US បុរស', 'US Men')}</th>
+                <th style={{ padding: '12px' }}>{t('US នារី', 'US Women')}</th>
               </tr>
             </thead>
             <tbody>

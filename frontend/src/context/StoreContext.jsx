@@ -29,21 +29,23 @@ export function StoreProvider({ children }) {
   // Helper translation function
   const t = (km, en) => (lang === 'en' ? en : km);
 
-  // Cart state persisted
+  // Cart state persisted safely
   const [cart, setCart] = useState(() => {
     try {
       const saved = localStorage.getItem('stepup_cart');
-      return saved ? JSON.parse(saved) : [];
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
   });
 
-  // Wishlist state persisted
+  // Wishlist state persisted safely
   const [wishlist, setWishlist] = useState(() => {
     try {
       const saved = localStorage.getItem('stepup_wishlist');
-      return saved ? JSON.parse(saved) : [];
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
@@ -155,7 +157,7 @@ export function StoreProvider({ children }) {
       }
     });
 
-    showToast(`👟 បានបន្ថែម ${product.name} (Size: ${selectedSize}) ទៅក្នុងកន្ត្រក!`);
+    showToast(`បានបន្ថែម ${product.name} (Size: ${selectedSize}) ទៅក្នុងកន្ត្រក!`);
   };
 
   const updateCartQuantity = (cartItemId, newQuantity) => {
@@ -181,20 +183,21 @@ export function StoreProvider({ children }) {
     setAppliedCoupon(null);
   };
 
-  // Totals
-  const cartSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  // Totals calculated safely
+  const cartSafe = Array.isArray(cart) ? cart : [];
+  const cartSubtotal = cartSafe.reduce((sum, item) => sum + (Number(item?.price) || 0) * (Number(item?.quantity) || 1), 0);
+  const cartItemsCount = cartSafe.reduce((sum, item) => sum + (Number(item?.quantity) || 1), 0);
   
   // Shipping calculation (free over $50)
-  const shippingFee = cartSubtotal >= 50 || cart.length === 0 ? 0 : 1.50;
+  const shippingFee = cartSubtotal >= 50 || cartSafe.length === 0 ? 0 : 1.50;
   
   // Discount calculation
   let discountAmount = 0;
   if (appliedCoupon) {
     if (appliedCoupon.type === 'percentage') {
-      discountAmount = (cartSubtotal * appliedCoupon.discount) / 100;
+      discountAmount = (cartSubtotal * (Number(appliedCoupon.discount) || 0)) / 100;
     } else if (appliedCoupon.type === 'fixed') {
-      discountAmount = Math.min(cartSubtotal, appliedCoupon.discount);
+      discountAmount = Math.min(cartSubtotal, Number(appliedCoupon.discount) || 0);
     } else if (appliedCoupon.type === 'shipping') {
       discountAmount = shippingFee;
     }
@@ -202,20 +205,23 @@ export function StoreProvider({ children }) {
 
   const grandTotal = Math.max(0, cartSubtotal - discountAmount + shippingFee);
 
-  // Wishlist actions
+  // Wishlist actions safe
   const toggleWishlist = (product) => {
-    const exists = wishlist.some(item => item.id === product.id);
+    if (!product || !product.id) return;
+    const currentWishlist = Array.isArray(wishlist) ? wishlist : [];
+    const exists = currentWishlist.some(item => item && item.id === product.id);
     if (exists) {
-      setWishlist(prev => prev.filter(item => item.id !== product.id));
-      showToast(`បានដក ${product.name} ពី Wishlist`, 'info');
+      setWishlist(prev => (Array.isArray(prev) ? prev : []).filter(item => item && item.id !== product.id));
+      showToast(`បានដក ${product.name || 'ស្បែកជើង'} ពី Wishlist`, 'info');
     } else {
-      setWishlist(prev => [...prev, product]);
-      showToast(`❤️ បានបន្ថែម ${product.name} ទៅក្នុង Wishlist!`);
+      setWishlist(prev => [...(Array.isArray(prev) ? prev : []), product]);
+      showToast(`បានបន្ថែម ${product.name || 'ស្បែកជើង'} ទៅក្នុង Wishlist!`);
     }
   };
 
   const isProductInWishlist = (productId) => {
-    return wishlist.some(item => item.id === productId);
+    if (!productId) return false;
+    return (Array.isArray(wishlist) ? wishlist : []).some(item => item && item.id === productId);
   };
 
   // Navigate helper

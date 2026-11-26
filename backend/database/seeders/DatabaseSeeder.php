@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Categories
         $categories = [
-            ['id' => 'sneakers', 'name' => 'Sneakers', 'khmer_name' => 'ស្បែកជើងកីឡា/Sneakers', 'icon' => '👟', 'description' => 'កីឡា ដើរកម្សាន្ត និងម៉ូដទាន់សម័យ'],
-            ['id' => 'formal', 'name' => 'Formal', 'khmer_name' => 'ស្បែកជើងធ្វើការ/Formal', 'icon' => '👞', 'description' => 'ស្បែកជើងការិយាល័យ ភាពថ្លៃថ្នូរ និងភាពទាក់ទាញ'],
-            ['id' => 'casual', 'name' => 'Casual', 'khmer_name' => 'ស្បែកជើងស៊ក/Casual', 'icon' => '🥾', 'description' => 'ប្រើប្រាស់ប្រចាំថ្ងៃ ងាយស្រួលពាក់ និងស្រួលជើង'],
-            ['id' => 'sandals', 'name' => 'Sandals', 'khmer_name' => 'ស្បែកជើងផ្ទាត់/Sandals', 'icon' => '🩴', 'description' => 'ផាសុកភាព ម៉ូដទាន់សម័យ និងធន់នឹងទឹក'],
-            ['id' => 'sale', 'name' => 'Sale & Promotion', 'khmer_name' => 'ទំនិញបញ្ចុះតម្លៃពិសេស', 'icon' => '🔥', 'description' => 'ការបញ្ចុះតម្លៃរហូតដល់ 40%']
+            ['id' => 'sneakers', 'name' => 'Sneakers', 'khmer_name' => 'ស្បែកជើងកីឡា/Sneakers', 'icon' => 'footprints', 'description' => 'កីឡា ដើរកម្សាន្ត និងម៉ូដទាន់សម័យ'],
+            ['id' => 'formal', 'name' => 'Formal', 'khmer_name' => 'ស្បែកជើងធ្វើការ/Formal', 'icon' => 'briefcase', 'description' => 'ស្បែកជើងការិយាល័យ ភាពថ្លៃថ្នូរ និងភាពទាក់ទាញ'],
+            ['id' => 'casual', 'name' => 'Casual', 'khmer_name' => 'ស្បែកជើងស៊ក/Casual', 'icon' => 'compass', 'description' => 'ប្រើប្រាស់ប្រចាំថ្ងៃ ងាយស្រួលពាក់ និងស្រួលជើង'],
+            ['id' => 'sandals', 'name' => 'Sandals', 'khmer_name' => 'ស្បែកជើងផ្ទាត់/Sandals', 'icon' => 'sun', 'description' => 'ផាសុកភាព ម៉ូដទាន់សម័យ និងធន់នឹងទឹក'],
+            ['id' => 'sale', 'name' => 'Sale & Promotion', 'khmer_name' => 'ទំនិញបញ្ចុះតម្លៃពិសេស', 'icon' => 'flame', 'description' => 'ការបញ្ចុះតម្លៃរហូតដល់ 40%']
         ];
         foreach ($categories as $cat) {
             Category::updateOrCreate(['id' => $cat['id']], $cat);
@@ -72,8 +72,7 @@ class DatabaseSeeder extends Seeder
                 'gender' => 'Unisex',
                 'description' => 'ស្បែកជើងកីឡា Nike Air VaporMax ផ្តល់នូវកម្រិតផាសុកភាពខ្ពស់ និងបច្ចេកវិទ្យាខ្យល់ Cushion សម្រាលសម្ពាធជើងពេលរត់ ឬដើរផ្លូវឆ្ងាយ។',
                 'images' => [
-                    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
-                    'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?auto=format&fit=crop&w=800&q=80'
+                    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=2400&q=95'
                 ]
             ],
             [
@@ -97,7 +96,7 @@ class DatabaseSeeder extends Seeder
                 'gender' => 'Men',
                 'description' => 'Adidas UltraBoost Light ជាមួយបច្ចេកវិទ្យា Boost Energy Return ស្រាលជាងមុន ៣០%។',
                 'images' => [
-                    'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80'
+                    'https://images.unsplash.com/photo-1518002171953-a080ee817e1f?auto=format&fit=crop&w=2400&q=95'
                 ]
             ],
             [
@@ -121,7 +120,7 @@ class DatabaseSeeder extends Seeder
                 'gender' => 'Men',
                 'description' => 'ស្បែកជើងស្បែកសុទ្ធម៉ូដ Oxford ស័ក្តិសមឥតខ្ចោះសម្រាប់បុគ្គលិកការិយាល័យ អ្នកដឹកនាំ និងពិធីមង្គលផ្សេងៗ។',
                 'images' => [
-                    'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80'
+                    '/products/oxford-italian-leather.png'
                 ]
             ],
             [

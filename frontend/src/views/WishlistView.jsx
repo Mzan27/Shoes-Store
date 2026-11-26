@@ -1,23 +1,20 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
-import { Heart, ShoppingBag, Trash2, ArrowLeft } from 'lucide-react';
 
 export default function WishlistView() {
-  const { wishlist, toggleWishlist, addToCart, navigateTo } = useStore();
+  const { wishlist, toggleWishlist, addToCart, navigateTo, lang, t } = useStore();
 
   if (wishlist.length === 0) {
     return (
       <div style={{ padding: '80px 0' }}>
         <div className="container" style={{ textAlign: 'center', maxWidth: '520px' }}>
           <div className="glass-panel" style={{ padding: '50px 30px', borderRadius: 'var(--radius-lg)' }}>
-            <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>❤️</div>
-            <h2 style={{ fontSize: '1.6rem', marginBottom: '10px' }}>មិនទាន់មានទំនិញក្នុង Wishlist</h2>
+            <h2 style={{ fontSize: '1.6rem', marginBottom: '10px' }}>{t('មិនទាន់មានទំនិញក្នុងបញ្ជីចូលចិត្ត', 'Your Wishlist is Empty')}</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '24px' }}>
-              ចុចលើរូបបេះដូងនៅលើស្បែកជើងដែលអ្នកពេញចិត្ត ដើម្បីរក្សាទុកមើលនៅពេលក្រោយ!
+              {t('ចុចលើរូបបេះដូងនៅលើស្បែកជើងដែលអ្នកពេញចិត្ត ដើម្បីរក្សាទុកមើលនៅពេលក្រោយ!', 'Click save on any shoe you love to keep it for later!')}
             </p>
             <button onClick={() => navigateTo('shop')} className="btn btn-primary btn-lg">
-              <ShoppingBag size={18} />
-              <span>ស្វែងរកស្បែកជើងឥឡូវនេះ</span>
+              <span>{t('ស្វែងរកស្បែកជើងឥឡូវនេះ', 'Explore Shoes Now')}</span>
             </button>
           </div>
         </div>
@@ -30,11 +27,11 @@ export default function WishlistView() {
       <div className="container">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
           <div>
-            <div className="badge badge-hot" style={{ marginBottom: '6px' }}>Wishlist • បញ្ជីចូលចិត្ត</div>
-            <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>ស្បែកជើងដែលអ្នកបានរក្សាទុក ({wishlist.length})</h1>
+            <div className="badge badge-hot" style={{ marginBottom: '6px' }}>{t('បញ្ជីចូលចិត្ត', 'Wishlist')}</div>
+            <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>{t('ស្បែកជើងដែលអ្នកបានរក្សាទុក', 'Saved Footwear')} ({wishlist.length})</h1>
           </div>
           <button onClick={() => navigateTo('shop')} className="btn btn-secondary btn-sm">
-            <ArrowLeft size={16} /> ទស្សនាបន្ថែម
+            {t('ទស្សនាបន្ថែម', 'View More')}
           </button>
         </div>
 
@@ -56,22 +53,20 @@ export default function WishlistView() {
                   onClick={() => toggleWishlist(product)}
                   style={{
                     position: 'absolute',
-                    top: '12px',
-                    right: '12px',
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
+                    top: '10px',
+                    right: '10px',
+                    padding: '4px 10px',
+                    borderRadius: '12px',
                     background: 'rgba(239, 68, 68, 0.9)',
                     border: 'none',
                     color: '#fff',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
                   }}
-                  title="Remove from Wishlist"
+                  title={t('ដកចេញពីបញ្ជីចូលចិត្ត', 'Remove from Wishlist')}
                 >
-                  <Trash2 size={16} />
+                  {t('ដកចេញ', 'Remove')}
                 </button>
               </div>
 
@@ -81,7 +76,7 @@ export default function WishlistView() {
                     {product.brand}
                   </div>
                   <h4 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '4px' }}>
-                    {product.name}
+                    {lang === 'km' && product.khmerName ? product.khmerName : product.name}
                   </h4>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '14px' }}>
                     ${product.price.toFixed(2)}
@@ -96,14 +91,13 @@ export default function WishlistView() {
                     className="btn btn-primary btn-sm"
                     style={{ flex: 1 }}
                   >
-                    <ShoppingBag size={14} />
-                    <span>ដាក់ចូលកន្ត្រក</span>
+                    <span>{t('ដាក់ចូលកន្ត្រក', 'Add to Cart')}</span>
                   </button>
                   <button
                     onClick={() => navigateTo('product-detail', product.id)}
                     className="btn btn-secondary btn-sm"
                   >
-                    មើល
+                    {t('មើល', 'View')}
                   </button>
                 </div>
               </div>
