@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../context/StoreContext';
 import * as api from '../services/api';
+import { CAMBODIAN_PROVINCES } from '../data/cambodiaLocations';
 import { 
   LayoutDashboard, 
   Package, 
@@ -34,7 +35,16 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboardView() {
-  const { showToast, storeSettings, setStoreSettings, t } = useStore();
+  const { showToast, storeSettings, setStoreSettings, lang, t } = useStore();
+
+  const formatProvince = (raw) => {
+    const val = raw || t('រាជធានីភ្នំពេញ', 'Phnom Penh');
+    const found = CAMBODIAN_PROVINCES.find(
+      p => p.km === val || p.en === val || p.id === val || (typeof val === 'string' && (val.includes(p.km) || val.includes(p.en)))
+    );
+    if (found) return lang === 'km' ? found.km : found.en;
+    return val;
+  };
   
   const [activeTab, setActiveTab] = useState('overview'); // overview, products, orders, coupons, reviews, telegram, database, settings
   const [dashboardData, setDashboardData] = useState(null);
@@ -657,7 +667,7 @@ export default function AdminDashboardView() {
                         <td style={{ padding: '12px', fontWeight: 800, color: 'var(--accent-primary)' }}>#{o.orderNumber || o.id}</td>
                         <td style={{ padding: '12px', fontWeight: 600 }}>{o.customerName || o.name || t('អតិថិជន', 'Customer')}</td>
                         <td style={{ padding: '12px' }}>{o.customerPhone || o.phone || '-'}</td>
-                        <td style={{ padding: '12px', fontSize: '0.8rem' }}>{o.shippingAddress?.province || (typeof o.shippingAddress === 'string' ? o.shippingAddress : (o.address || t('ភ្នំពេញ', 'Phnom Penh')))}</td>
+                        <td style={{ padding: '12px', fontSize: '0.8rem' }}>{formatProvince(o.shippingAddress?.province || (typeof o.shippingAddress === 'string' ? o.shippingAddress : o.address))}</td>
                         <td style={{ padding: '12px', fontWeight: 800 }}>${Number(o.totalAmount || o.grandTotal || o.total || 0).toFixed(2)}</td>
                         <td style={{ padding: '12px' }}>
                           <span className="badge badge-success">{o.paymentMethod || 'COD'}</span>
